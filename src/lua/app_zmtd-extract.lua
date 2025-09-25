@@ -1,86 +1,95 @@
 -- Extract_MTD4.lua
--- ÌáÈ¡Éè±¸mtdÏµÍ³·ÖÇø²¢ÖØÃüÃû±£´æÎªÎÄ¼ş
--- 
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Extract device MTD system partition and rename/save as file
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- Copyright (C) 2025-2026 Punguin
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU Affero General Public License as
+-- published by the Free Software Foundation, either version 3 of the
+-- License, or (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+-- GNU Affero General Public License for more details.
+--
+-- You should have received a copy of the GNU Affero General Public License.
+-- If not, see <https://www.gnu.org/licenses/>.
+--
+-- Contact: 3618679658@qq.com
+-- Created with assistance from ChatGPT
 
--- ÉèÖÃ±êÌâÓë´°¿Ú´óĞ¡
-os.execute("title Æó¶ìWIFIÖúÊÖ-MTDÌáÈ¡¹¤¾ß")
+-- Set window title and size
+os.execute("title Penguin WiFi Assistant - MTD Extract Tool")
 os.execute("mode con: cols=66 lines=35")
 
--- ÒıÈëÍâ²¿¿â
-local path = require("lua\\path") -- ¹¤¾ßÂ·¾¶±äÁ¿¿â
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
+-- Import external libraries
+local path = require("lua\\path")   -- Tool path library
+local colors = require("lua\\colors") -- ANSI color codes
+local delay = require("lua\\sleep") -- Countdown/delay functions
 
--- »ñÈ¡½Å±¾ËùÔÚÄ¿Â¼µÄ¾ø¶ÔÂ·¾¶
+-- Get absolute path of the script directory
 local function get_script_dir()
     local path = io.popen("cd"):read("*l")
     return path .. "\\"
 end
 local script_dir = get_script_dir()
 
--- ¶¨ÒåÄ¿±êÎÄ¼ş¼ĞÂ·¾¶
+-- Define target folder path
 local qt_folder = script_dir .. "TQ\\"
 
--- ÌáÈ¡·ÖÇø
-print(colors.blue .. colors.bright .. "ËÑÑ°Éè±¸..." .. colors.reset)
-delay.sleep (4) -- µÈ´ıÉè±¸
-os.execute("bin\\adb pull /dev/mtd4 draw.tmp")   -- ¹Ì¼şMTDÌáÈ¡
+-- Extract partition
+print(colors.blue .. colors.bright .. "Searching for device..." .. colors.reset)
+delay.sleep(4) -- Wait for device to be ready
+os.execute("bin\\adb pull /dev/mtd4 draw.tmp")   -- Pull MTD firmware partition
 print()
 print()
-print(colors.green .. "ÒÑ³¢ÊÔÌáÈ¡" .. colors.reset)
+print(colors.green .. "Extraction attempted" .. colors.reset)
 
--- »ñÈ¡ÓÃ»§ÊäÈëµÄĞÂÎÄ¼şÃû
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-io.write("ÇëÊäÈëĞÂµÄÎÄ¼şÃû£¨²»º¬À©Õ¹Ãû£©£º")               --ÔİÍ£³ÌĞòµÄÖ´ĞĞ,ÈÃÓÃ»§ÊäÈëÎÄ±¾
-local new_file_name = io.read()                            --½«ÓÃ»§ÍÏÈëµÄÎÄ¼şÉè¶¨Îª"new_file_name"º¯Êı
-new_file_name = new_file_name:gsub('^%"', ''):gsub('%"$', '')      --È¥µôÎÄ¼şÂ·¾¶µÄË«ÒıºÅ£¨Èç¹ûÓĞ£©
-new_file_name = new_file_name .. ".bin" -- ½«ĞÂÎÄ¼şÃû¼ÓÉÏ .bin ºó×º
+-- Get user input for new filename
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+io.write("Enter a new filename (without extension): ")
+local new_file_name = io.read()
+new_file_name = new_file_name:gsub('^%"', ''):gsub('%"$', '') -- Remove quotes if any
+new_file_name = new_file_name .. ".bin" -- Append .bin extension
 
--- ¹¹ÔìÍêÕûµÄÂ·¾¶
+-- Construct full file paths
 local old_file_path = script_dir .. "draw.tmp"
 local new_file_path = script_dir .. new_file_name
 
--- ÖØÃüÃûÎÄ¼ş
+-- Rename file
 local success, err = os.rename(old_file_path, new_file_path)
 if success then
-    print(colors.green .."ÎÄ¼şÒÑ³É¹¦ÖØÃüÃûÎª: " .. new_file_name .. colors.reset)
+    print(colors.green .. "File successfully renamed to: " .. new_file_name .. colors.reset)
 else
-    print(colors.red .."ÖØÃüÃûÊ§°Ü: " .. err .. colors.reset)
+    print(colors.red .. "Rename failed: " .. err .. colors.reset)
 end
 
--- ¼ì²éÄ¿±êÎÄ¼ş¼ĞÊÇ·ñ´æÔÚ£¬Èç¹û²»´æÔÚÔò´´½¨
+-- Ensure target folder exists
 local function ensure_directory_exists(path)
     local ok, err, code = os.rename(path, path)
     if not ok then
         if code == 2 then
             os.execute('mkdir "' .. path .. '"')
         else
-            print(colors.red .."ÎŞ·¨¼ì²é»ò´´½¨Ä¿Â¼: " .. err .. colors.reset)
+            print(colors.red .. "Cannot check or create directory: " .. err .. colors.reset)
         end
     end
 end
 
 ensure_directory_exists(qt_folder)
 
--- ¹¹ÔìĞÂµÄÄ¿±êÂ·¾¶
+-- Construct target file path
 local target_file_path = qt_folder .. new_file_name
 
--- ÒÆ¶¯ÎÄ¼ş
+-- Move file to target folder
 local success, err = os.rename(new_file_path, target_file_path)
 if success then
-    print(colors.green .."ÎÄ¼şÒÑ³É¹¦ÒÆ¶¯ÖÁQTÎÄ¼ş¼Ğ".. colors.reset)
-	os.execute("explorer TQ")
-	print(colors.green .. colors.bright .."½Å±¾ÒÑÕıÈ·Ö´ĞĞ,ÎåÃëºó¹Ø±Õ´°¿Ú".. colors.reset)
-	delay.sleep (5)
+    print(colors.green .. "File successfully moved to QT folder" .. colors.reset)
+    os.execute("explorer TQ")
+    print(colors.green .. colors.bright .. "Script executed correctly, window will close in 5 seconds" .. colors.reset)
+    delay.sleep(5)
 else
-    print(colors.red .."ÒÆ¶¯ÎÄ¼şÊ§°Ü: " .. err .. colors.reset)
-	os.execute("pause")
+    print(colors.red .. "Failed to move file: " .. err .. colors.reset)
+    os.execute("pause")
 end
