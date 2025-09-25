@@ -1,33 +1,34 @@
 -- path.lua
--- 提供常用工具路径的模块
+-- A module providing common tool paths
 -- 
--- 版权 (C) 2025-2026 企鹅君Punguin
+-- Copyright (C) 2025-2026 Penguin Punguin
 --
--- 本程序是自由软件：你可以根据自由软件基金会发布的GNU Affero通用公共许可证的条款，即许可证的第3版或（您选择的）任何后来的版本重新发布它和/或修改它。。
--- 本程序的发布是希望它能起到作用。但没有任何保证；甚至没有隐含的保证。本程序的分发是希望它是有用的，但没有任何保证，甚至没有隐含的适销对路或适合某一特定目的的保证。 参见 GNU Affero通用公共许可证了解更多细节。
--- 您应该已经收到了一份GNU Affero通用公共许可证的副本。 如果没有，请参见<https://www.gnu.org/licenses/>。
+-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+-- You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- 联系我们：3618679658@qq.com
--- ChatGPT协助制作编写
+-- Contact us: 3618679658@qq.com
+-- Assisted by ChatGPT in development and writing
 
 local path = {}
 
--- 统一管理 bin 目录
+-- Unified management of the bin directory
 local base_bin = "bin"
 
--- 工具路径
+-- Tool paths
 path.lua = base_bin .. "\\lua54.exe"
 path.curl = base_bin .. "\\curl.exe"
 path.adb  = base_bin .. "\\adb.exe"
 
--- 如果需要绝对路径，可以这样获取：
+-- To obtain absolute paths, you could do this:
 -- local lfs = require("lfs")
--- LuaFileSystem 可选
+-- LuaFileSystem (optional)
 -- path.abs_lua = lfs.currentdir() .. "/" .. path.lua
 
 
--- 提供函数调用方式
+-- Provide a function-based access method
 function path.get(tool)
     return path[tool]
-	end
+end
+
 return path
