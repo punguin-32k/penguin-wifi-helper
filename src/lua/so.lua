@@ -1,45 +1,45 @@
 -- so.lua
--- ¼òµ¥µÄMTDÉÕÂ¼¹¤¾ß(°ë³ÉÆ·)
+-- A simple MTD flashing tool (work in progress)
 -- 
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Copyright (C) 2025-2026 Penguin Punguin
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+-- You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
+-- Contact us: 3618679658@qq.com
+-- Assisted by ChatGPT in development and writing
 
--- ÉèÖÃ±êÌâÖÕ¶ËÓë¶¨Òå´°¿Ú´óĞ¡
-os.execute("title Æó¶ì¾ıPINGUIN_run¿éÉÕĞ´¹¤¾ß     µ±Ç°°æ±¾: 1.0²âÊÔ°æ")
+-- Set terminal title and window size
+os.execute("title Penguin PINGUIN_run Block Flashing Tool     Current Version: 1.0 Beta")
 os.execute("mode con: cols=66 lines=35")
 
--- ÒıÈëÍâ²¿¿â
-local path = require("lua\\path") -- ¹¤¾ßÂ·¾¶±äÁ¿¿â
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
+-- Import external libraries
+local path = require("lua\\path") -- Utility path variable library
+local colors = require("lua\\colors") -- ANSI color code library
+local delay = require("lua\\sleep") -- Countdown operation
 
--- Êä³öÌáÊ¾ĞÅÏ¢
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-print(colors.red .. '¾¯¸æ!ÄúÊäÈëµÄÈÎºÎÎÄ¼ş½«»áÖ±½Ó´«ÈëÉè±¸/tmp/ÖĞ' .. colors.reset)
-print(colors.red .. "ÇëÈ·±£ÎÄ¼ş²»´óÓÚ3.19MB" .. colors.reset)
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+-- Print warning message
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+print(colors.red .. 'Warning! Any file you input will be directly transferred to /tmp/ on the device.' .. colors.reset)
+print(colors.red .. "Please ensure the file size does not exceed 3.19 MB." .. colors.reset)
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 
--- »ñÈ¡½Å±¾ËùÔÚÄ¿Â¼
-local script_dir = debug.getinfo(1).source:match("@?(.*/)")   --Éè¶¨Ò»¸öÃûÎª"script_dir"²ÎÊı
-if not script_dir then                                        --Ñ­»·»ñÈ¡"./"Â·¾¶
+-- Get the script's directory
+local script_dir = debug.getinfo(1).source:match("@?(.*/)")   -- Define a parameter named "script_dir"
+if not script_dir then                                        -- Loop to get the "./" path
     script_dir = "."
 end
 
--- ÌáÊ¾ÓÃ»§ÊäÈëÎÄ¼şÂ·¾¶»òÍÏÈëÎÄ¼ş
-io.write("ÇëÊäÈëÎÄ¼şÂ·¾¶»ò½«ÎÄ¼şÍÏÈë´°¿Ú: ")               --ÔİÍ£³ÌĞòµÄÖ´ĞĞ,ÈÃÓÃ»§ÊäÈëÎÄ±¾
-local file_path = io.read()                                --½«ÓÃ»§ÍÏÈëµÄÎÄ¼şÉè¶¨Îª"file_path"º¯Êı
-file_path = file_path:gsub('^%"', ''):gsub('%"$', '')      --È¥µôÎÄ¼şÂ·¾¶µÄË«ÒıºÅ£¨Èç¹ûÓĞ£©
+-- Prompt user to input file path or drag a file into the window
+io.write("Please enter the file path or drag a file into this window: ")  -- Pause execution to allow user input
+local file_path = io.read()                                               -- Assign the dragged file to the "file_path" variable
+file_path = file_path:gsub('^%"', ''):gsub('%"$', '')                     -- Remove surrounding double quotes from the file path (if any)
 
--- ¼ì²éÎÄ¼şÊÇ·ñ´æÔÚ
-local function file_exists(path)                           --»ñÈ¡ÒÑÉèÖÃµÄÎÄ¼şº¯Êı
-    local file = io.open(path, "rb")                       --»ñÈ¡ÓÃ»§¸Õ¸ÕÊäÈëµÄÎÄ¼ş
-    if file then                                           --Ê£ÏÂµÄ´úÂëÊÇ¼ì²âÎÄ¼ş
+-- Check if the file exists
+local function file_exists(path)                                          -- Use the previously set file variable
+    local file = io.open(path, "rb")                                      -- Open the file the user just entered
+    if file then                                                          -- Remaining code checks file existence
         file:close()
         return true
     else
@@ -47,92 +47,92 @@ local function file_exists(path)                           --»ñÈ¡ÒÑÉèÖÃµÄÎÄ¼şº¯Ê
     end
 end
 
-if not file_exists(file_path) then                         --Èç¹ûÎÄ¼ş²»´æÔÚ£¬ÔòÌáÊ¾ÓÃ»§
-    print(colors.red .. "ÎÄ¼ş²»´æÔÚ: " .. file_path .. "½Å±¾ÒÑÍË³ö" .. colors.reset)
+if not file_exists(file_path) then                                        -- If file doesn't exist, notify user
+    print(colors.red .. "File does not exist: " .. file_path .. ". Script exited." .. colors.reset)
     os.execute("pause")
-	return
+    return
 end
 
--- ¸´ÖÆ²¢ÖØÃüÃûÎÄ¼ş
-local destination_path = script_dir .. "/mtds.new"         --ÉèÖÃÒªÖØÃüÃûµÄÎÄ¼şÃû³Æ"mtds.new"
-local input_file = io.open(file_path, "rb")                --ÉèÖÃÖØÃüÃû²ÎÊı"rb"
-local output_file = io.open(destination_path, "wb")        --ÉèÖÃÖØÃüÃû²ÎÊı"wb"
+-- Copy and rename the file
+local destination_path = script_dir .. "/mtds.new"                        -- Set the renamed file as "mtds.new"
+local input_file = io.open(file_path, "rb")                               -- Set copy mode to "rb"
+local output_file = io.open(destination_path, "wb")                       -- Set write mode to "wb"
 
-if input_file and output_file then                         --½øĞĞ¸´ÖÆÓëÖØÃüÃû²Ù×÷
+if input_file and output_file then                                        -- Perform copy and rename
     output_file:write(input_file:read("*all"))
     input_file:close()
     output_file:close()
-    print("ÎÄ¼şÒÑ¸´ÖÆ²¢ÖØÃüÃûÎª: " .. destination_path)    --Êä³ö½á¹û
+    print("File copied and renamed to: " .. destination_path)             -- Print result
 else
-    print("ÎÄ¼ş¸´ÖÆÊ§°Ü¡£")                                --Êä³ö½á¹û
+    print("File copy failed.")                                            -- Print result
     os.execute("pause")
-	return                                                 --ÍË³ö½Å±¾
+    return                                                                -- Exit script
 end
 
--- ¼ì²ébusyboxÎÄ¼şÊÇ·ñ´æÔÚ
-local busybox_path = script_dir .. "\\file\\busybox"              --ÉèÖÃÒª¼ì²éµÄÎÄ¼şÃû³Æ
-if not file_exists(busybox_path) then                      --Êä³ö½á¹û
-    print("busyboxÎÄ¼ş²»´æÔÚ: " .. busybox_path)           --Êä³ö½á¹û
+-- Check if busybox file exists
+local busybox_path = script_dir .. "\\file\\busybox"                      -- Set the file to check
+if not file_exists(busybox_path) then                                     -- Print result
+    print("busybox file not found: " .. busybox_path)                     -- Print result
     os.execute("pause")
-	return                                                 --ÍË³ö½Å±¾
+    return                                                                -- Exit script
 end
 
--- Ê¹ÓÃadb push½«ÎÄ¼ş´«Êäµ½ÒÑÁ¬½ÓÉè±¸µÄ/tmp
-os.execute('adb push "' .. destination_path .. '" /tmp/')  --Í¨¹ıadbÉÏ´«ÎÄ¼ş
-os.execute('adb push "' .. busybox_path .. '" /tmp/')      --Í¨¹ıadbÉÏ´«ÎÄ¼ş
-print(colors.green .. "ÎÄ¼şºÍbusyboxÒÑ³¢ÊÔ´«Êäµ½Éè±¸µÄ/tmpÄ¿Â¼¡£".. colors.reset)
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+-- Use adb push to transfer files to the connected device's /tmp directory
+os.execute('adb push "' .. destination_path .. '" /tmp/')                 -- Upload file via ADB
+os.execute('adb push "' .. busybox_path .. '" /tmp/')                     -- Upload busybox via ADB
+print(colors.green .. "File and busybox have been transferred to the device's /tmp directory." .. colors.reset)
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 
--- É¾³ıÁÙÊ±ÎÄ¼ş
-os.execute("del mtds.new")                                 --É¾³ı"mtds.new"ÎÄ¼ş,ÕâÊÇÓÃ»§¸Õ¸ÕÍÏÈëµÄÁÙÊ±ÎÄ¼ş              
+-- Delete temporary file
+os.execute("del mtds.new")                                                -- Delete "mtds.new", the temporary file created from user input
 
--- Ñ¯ÎÊÓÃ»§ÊÇ·ñ½øĞĞ¹Ø¼üĞÔ²Ù×÷
-print(colors.red .. '¾¯¸æ!½ÓÏÂÀ´µÄ²Ù×÷Éæ¼°¹Ø¼üMTD¿é¸üĞÂ' .. colors.reset)
-print(colors.red .. colors.bright .. 'Èô¸üĞÂÊ§°Ü¿ÉÄÜ»áµ¼ÖÂÄúµÄÉè±¸ÎŞ·¨Õı³£Æô¶¯!' .. colors.reset)
-print(colors.green .. 'ÇëÄúÈ·ÈÏÊÇ·ñÒª½øĞĞMTD¿é¸üĞÂ²Ù×÷' .. colors.reset)
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-io.write("ÇëÊäÈë'yes'ÒÔ¼ÌĞø£º")                            --ÔİÍ£³ÌĞòµÄÖ´ĞĞ,ÈÃÓÃ»§ÊäÈëÎÄ±¾
-local input = io.read()                                    --½«ÓÃ»§¸Õ¸ÕÊäµÄÎÄ±¾ÉèÖÃÎª"input"º¯Êı
-if input ~= "yes" then                                     --±È¶ÔÓÃ»§µÄÊäÈëÊÇ·ñÎª"yes"
-  print("ÄúÎ´Í¬Òâ£¬³ÌĞòÍË³ö¡£")
-  print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-  os.execute("pause")
-  os.exit() -- ÍË³ö³ÌĞò
-  else
-  print(colors.green .. "ÄúÒÑÍ¬Òâ£¬¼ÌĞøÖ´ĞĞ³ÌĞò¡£" .. colors.reset)
-  print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+-- Ask user to confirm critical operation
+print(colors.red .. 'Warning! The next step involves critical MTD block flashing.' .. colors.reset)
+print(colors.red .. colors.bright .. 'Flashing failure may render your device unbootable!' .. colors.reset)
+print(colors.green .. 'Please confirm whether you want to proceed with the MTD block update.' .. colors.reset)
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+io.write("Type 'yes' to continue: ")                                      -- Pause execution for user input
+local input = io.read()                                                   -- Store user input in variable "input"
+if input ~= "yes" then                                                    -- Compare input to "yes"
+    print("You declined. Exiting program.")
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+    os.execute("pause")
+    os.exit() -- Exit program
+else
+    print(colors.green .. "Confirmed. Continuing execution." .. colors.reset)
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 end
 
-print(colors.red .. '!½«ÔÚÎåÃëºó¼¤»îÖ÷Ïß³Ì,ÄúÓĞÎåÃëµÄ¿¼ÂÇÊ±¼ä!' .. colors.reset)
-delay.sleep(5) -- ÑÓ³Ù5Ãë
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+print(colors.red .. '!Main flashing thread will activate in 5 seconds! You have 5 seconds to reconsider!' .. colors.reset)
+delay.sleep(5) -- Delay 5 seconds
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 
--- ½øĞĞMTD¿é¸üĞÂ/Ë¢Ğ´²Ù×÷
-print(colors.cyan .. colors.bright .. "ÕıÔÚ³¢ÊÔ¸øÓèbusybox¹Ø¼üÈ¨ÏŞ" .. colors.reset)
+-- Perform MTD block flashing
+print(colors.cyan .. colors.bright .. "Attempting to grant critical permissions to busybox..." .. colors.reset)
 os.execute("adb shell chmod +x /tmp/busybox")
-print(colors.green .."busyboxÒÑ±»ÊÚÓè¶ÁĞ´È¨ÏŞ".. colors.reset)
+print(colors.green .. "busybox has been granted execute permissions." .. colors.reset)
 print(" ")
-print(colors.cyan .. colors.bright .. "ÕıÔÚ³¢ÊÔÊ¹ÓÃddË¢Ğ´MTD4" .. colors.reset)
+print(colors.cyan .. colors.bright .. "Attempting to flash MTD4 using dd..." .. colors.reset)
 os.execute("adb shell /tmp/busybox nohup dd if=/tmp/mtds.new of=/dev/mtd4 &")
-print(colors.red .. "·ÖÇøĞŞ¸ÄÍê±Ïºó¹ı¼¸Ãë»á×Ô¶¯ÖØÆôÉè±¸" .. colors.reset)
+print(colors.red .. "Device will automatically reboot a few seconds after partition write completes." .. colors.reset)
 print(colors.bright .. "(==0%)" .. colors.reset)
-delay.sleep(10) -- ÑÓ³Ù10Ãë
+delay.sleep(10) -- Delay 10 seconds
 print(colors.bright .. "(=======20%)" .. colors.reset)
 print(colors.bright .. "(=============30%)" .. colors.reset)
 print(colors.bright .. "(===================40%)" .. colors.reset)
 print(colors.bright .. "(=========================50%)" .. colors.reset)
 print(colors.bright .. "(===============================66%)" .. colors.reset)
-delay.sleep(10) -- ÑÓ³Ù10Ãë
+delay.sleep(10) -- Delay 10 seconds
 print(colors.bright .. "(======================================79%)" .. colors.reset)
-delay.sleep(9) -- ÑÓ³Ù9Ãë
+delay.sleep(9) -- Delay 9 seconds
 print(colors.bright .. "(===========================================83%)" .. colors.reset)
-delay.sleep(12) -- ÑÓ³Ù12Ãë
+delay.sleep(12) -- Delay 12 seconds
 print(colors.bright .. "(=================================================96%)" .. colors.reset)
-delay.sleep(6) -- ÑÓ³Ù6Ãë
+delay.sleep(6) -- Delay 6 seconds
 print(colors.bright .. "(=======================================================99%)" .. colors.reset)
-delay.sleep(60) -- ÑÓ³ÙÒ»·ÖÖÓ
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-print(colors.green .. "ÉÕĞ´ÒÑ¾­Íê³ÉÁË,°´ÀíÀ´ËµÉè±¸¿ÉÒÔÕı³£¿ª»ú" .. colors.reset)
-print(colors.red .. "Èç¹û²»¿ª»ú£¬ÇëµÈ´ıÁ½·ÖÖÓºóÔÙ°Î³ö" .. colors.reset)
-print(colors.red .. "ÓĞ¿ÉÄÜË¢»úÊ±¼äÓëÎÒÃÇÔ¤¼ÆµÄÊ±¼ä²»Í¬" .. colors.reset)
+delay.sleep(60) -- Delay 60 seconds
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+print(colors.green .. "Flashing completed. Your device should boot normally." .. colors.reset)
+print(colors.red .. "If it doesn't power on, wait two minutes before unplugging." .. colors.reset)
+print(colors.red .. "Actual flashing time may differ from our estimate." .. colors.reset)
 os.execute("pause")
