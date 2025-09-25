@@ -1,262 +1,114 @@
 -- machine_material.lua
--- Í¨¹ıadb»ñÈ¡Éè±¸nv²ÎÊı²¢ºº»¯ºóÖ±¹ÛµÄÕ¹Ê¾¸øÓÃ»§
+-- Obtain device NV parameters through adb and display them clearly to the user after localization
 -- 
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Copyright (C) 2025-2026 Penguin Punguin
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+-- You should have received a copy of the GNU Affero General Public License. If not, see <https://www.gnu.org/licenses/>.
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
+-- Contact us: 3618679658@qq.com
+-- Written with assistance from ChatGPT
 
--- ÉèÖÃ±êÌâÓë´°¿Ú´óĞ¡
-os.execute("title Éè±¸ĞÅÏ¢(By Æó¶ì¾ıpunguin)")
+-- Set title and window size
+os.execute("title Device Information (By Penguin punguin)")
 os.execute("mode con: cols=57 lines=35")
 
--- ÒıÈëÍâ²¿¿â
-local path = require("lua\\path") -- ¹¤¾ßÂ·¾¶±äÁ¿¿â
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
+-- Import external libraries
+local path = require("lua\\path")   -- Tool path variable library
+local colors = require("lua\\colors") -- ANSI color code library
+local delay = require("lua\\sleep") -- Countdown operations
 
--- ÈÃÓÃ»§µÈ´ı
-print(colors.cyan .. colors.bright .. "ÕıÔÚ»ñÈ¡..." .. colors.reset)
-print() -- ¸ø³öÒ»ĞĞ¿ÕĞĞ¿ÉÒÔÈÃ½çÃæÃÀ¹Û
+-- Let user wait
+print(colors.cyan .. colors.bright .. "Fetching..." .. colors.reset)
+print() -- Print a blank line to make the UI look nicer
 
--- ¼ì²éÊÇ·ñÓĞ adb Éè±¸Á¬½Ó
-local function is_adb_device_connected()
-	local check = io.popen("bin\\adb get-state")
-	local state = check:read("*a")
-	check:close()
-
-	if not state:match("device") then -- µ±Ã»ÓĞÉè±¸Ê±¾ÍÊä³ö
+-- Check if an adb device is connected
+...
+	if not state:match("device") then -- If no device is detected
 	    print()
-		print(colors.red .."[´íÎó] Î´¼ì²âµ½ADBÉè±¸£¬ÇëÁ¬½ÓÉè±¸ºóÖØÊÔ¡£".. colors.reset)
-		print(colors.green .."ÌáÊ¾:Èç¹ûÉè±¸´¦ÓÚÁ¬½Óµ«ÀëÏßÄ£Ê½£¬Éè±¸adbÒ²ÊÇ²»¿ÉÓÃ¡£".. colors.reset)
+		print(colors.red .."[Error] No ADB device detected, please connect a device and try again.".. colors.reset)
+		print(colors.green .."Tip: If the device is connected but offline, adb will also be unavailable.".. colors.reset)
 		print()
-		print("°´ÈÎÒâ¼üÍË³ö...")
-		io.read()  -- »ñÈ¡ÓÃ»§ÊäÈë
-		os.exit(1)  -- ·Ç0±íÊ¾Òì³£ÍË³ö
-	end
+		print("Press any key to exit...")
+...
 end
 
--- ÉèÖÃ nv ²éÑ¯ÃüÁî£¨´øÁ¬½Ó¼ì²â£©
-function get_nv_value(param)
-	is_adb_device_connected()  -- ¼ì²éÉè±¸£¬ÈôÎ´Á¬½Ó»áÍË³ö½Å±¾
+-- Set NV query command (with connection check)
+...
+	is_adb_device_connected()  -- Check device; exits if not connected
+...
 
-	local command = "bin\\adb shell nv get " .. param
-	local handle = io.popen(command)
-	local result = handle:read("*a")
-	handle:close()
+-- Define corresponding parameters (too many to annotate)
+...
 
-	local value = result:gsub("%s+", "")
-	return value
-end
-
--- ¶¨Òå¶ÔÓ¦²ÎÊı(Ì«¶à²»ÏëĞ´×¢ÊÍ)
-local intype = get_nv_value("zcgmi")
-local fota_platform = get_nv_value("fota_platform")
-local cr_version = get_nv_value("cr_version")
-local remo_web_sw_version = get_nv_value("remo_web_sw_version")
-local hw_version = get_nv_value("hw_version")
-local os_url = get_nv_value("os_url")
-local Language = get_nv_value("Language")
-local fota_oem = get_nv_value("fota_oem")
-local apn_mode = get_nv_value("apn_mode")
-local default_apn = get_nv_value("default_apn")
-local SSID1 = get_nv_value("SSID1")
-local m_SSID = get_nv_value("m_SSID")
-local DMZEnable = get_nv_value("DMZEnable")
-local upnpEnabled = get_nv_value("upnpEnabled")
-local sntp_timezone = get_nv_value("sntp_timezone")
-local wifiEnabled = get_nv_value("wifiEnabled")
-local max_station_num = get_nv_value("MAX_Station_num")
-local sim_unlock_code = get_nv_value("sim_unlock_code")
-local remo_sim_admin_password = get_nv_value("remo_sim_admin_password")
-local admin_Password = get_nv_value("admin_Password")
-local dhcpDns = get_nv_value("dhcpDns")
-local tr069_enable = get_nv_value("tr069_enable")
-local tr069_acs_url = get_nv_value("tr069_acs_url")
--- Remo×¨ÊôÄÚÈİ add Start 2025.06.25
-local remo_sim_select = get_nv_value("remo_sim_select_display_type")
-local remo_root_server_url = get_nv_value("fota_request_host")
-local remo_root_server_url2 = get_nv_value("remo_fota_request_host")
-local remo_root_server_url3 = get_nv_value("remo_dm_request_host")
-local remo_root_server_port3 = get_nv_value("remo_dm_request_port")
-local remo_root_server_path3 = get_nv_value("remo_dm_request_path")
-local remo_config_server_url = get_nv_value("xinxun_iot_http_get_config_host")
-local remo_config_server_path = get_nv_value("xinxun_iot_http_get_config_path")
-local remo_led_server_url = get_nv_value("xinxun_iot_http_led_control_host")
-local remo_led_server_path = get_nv_value("xinxun_iot_http_led_control_path")
-local remo_flow_server_url = get_nv_value("xinxun_iot_http_flow_report_host")
-local remo_flow_server_path = get_nv_value("xinxun_iot_http_flow_report_path")
-local remo_info_server_url = get_nv_value("xinxun_iot_http_info_report_host")
-local remo_info_server_path = get_nv_value("xinxun_iot_http_info_report_path")
--- Remo×¨ÊôÄÚÈİ add End
-local fota_updateMode = get_nv_value("fota_updateMode")
-local fota_updateIntervalDay = get_nv_value("fota_updateIntervalDay")
-local fota_version_delta_url = get_nv_value("fota_version_delta_url")
-local tc_enable = get_nv_value("tc_enable")
-local tc_uplink = get_nv_value("tc_uplink")
-local tc_downlink = get_nv_value("tc_downlink")
-
--- ÇåÆÁ
+-- Clear screen
 os.execute("cls")
 
--- ÏÔÊ¾½á¹û
-if intype ~= "" then
-	print(colors.green .. colors.bright .. "Éè±¸ÀàĞÍ: " .. intype .. "          ´îÔØµÄÆ½Ì¨:" .. fota_platform .. colors.reset)
-else
-	print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T ÏµÍ³ĞÅÏ¢¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡Éè±¸ÀàĞÍÓë´îÔØµÄÆ½Ì¨" .. colors.reset)
-end
-if remo_web_sw_version ~= "" then
-	print(colors.yellow .. colors.bright .. "Èí¼ş°æ±¾: " .. remo_web_sw_version .. colors.reset)
-elseif cr_version ~= "" then
-	print(colors.yellow .. colors.bright .. "Èí¼ş°æ±¾: " .. cr_version .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡Èí¼ş°æ±¾" .. colors.reset)
-end
-if hw_version ~= "" then
-	print(colors.yellow .. colors.bright .. "Ó²¼ş°æ±¾: " .. hw_version .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡Ó²¼ş°æ±¾" .. colors.reset)
-end
-if os_url ~= "" then
-	print("³§¼Ò¹ÙÍø: " .. os_url)
-else
-	print(colors.red .. colors.bright .. "³§¼Ò¹ÙÍø:ÎŞ·¨»ñÈ¡,¿ÉÄÜÎª¿Õ!" .. colors.reset)
-end
-if Language ~= "" then
-	print(colors.green .. colors.bright .. "Éè±¸ÓïÑÔ: " .. Language .. "            Éú²ú³§¼Ò:" .. fota_oem .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡Éè±¸ÓïÑÔÓëÉú²ú³§¼Ò" .. colors.reset)
-end
-if apn_mode ~= "" then
-	print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T ÁªÍøĞÅÏ¢¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-	print(colors.yellow .. colors.bright .. "APNÄ£Ê½: " .. apn_mode .. "            µ±Ç°APN: " .. default_apn .. colors.reset)
-else
-	print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T ÁªÍøĞÅÏ¢¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡APNĞÅÏ¢" .. colors.reset)
-end
-if DMZEnable ~= "" then
-	print(colors.yellow .. colors.bright .. "dmz×´Ì¬: " .. DMZEnable .. "               upnp×´Ì¬: " .. upnpEnabled .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡dmzÓëupnpĞÅÏ¢" .. colors.reset)
-end
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T WIFIĞÅÏ¢¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-if max_station_num ~= "" then
-	print(colors.green .. colors.bright .. "WIFI¿ªÆô: " .. wifiEnabled .. "              ×î´óÁ¬½ÓÊı: " .. max_station_num .. "¸ö" .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡wifiĞÅÏ¢" .. colors.reset)
-end
-if SSID1 ~= "" then
-	print(colors.yellow .. colors.bright .. "µ±Ç°WIFIÃû³Æ: " .. SSID1 .. "   ¶àÖØWIFIÃû³Æ: " .. m_SSID .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡wifiĞÅÏ¢" .. colors.reset)
-end
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T ÍøÂçĞÅÏ¢¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-if dhcpDns ~= "" then
-	print(colors.bright .. "ºóÌ¨µØÖ·: " .. dhcpDns .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡ºóÌ¨ĞÅÏ¢" .. colors.reset)
-end
-if admin_Password ~= "" then
-	print(colors.yellow .. colors.bright .. "ºóÌ¨ÃÜÂë: " .. admin_Password .. colors.reset)
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡ºóÌ¨ÃÜÂë" .. colors.reset)
-end
-if sim_unlock_code ~= "" then
-    print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T ÃÜÂëÏà¹Ø¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-	print(colors.yellow .. colors.bright .. "SIM½âËøÂë: " .. sim_unlock_code .. colors.reset)
-else
-end
-if remo_sim_admin_password ~= "" then
-    print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T ÃÜÂëÏà¹Ø¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-	print(colors.yellow .. colors.bright .. "SIMÄ£Ê½: " .. remo_sim_select .. colors.reset)
-	print(colors.yellow .. colors.bright .. "SIM½âËøÂë: " .. remo_sim_admin_password .. colors.reset)
-else
-end
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T Ô¶³Ì¿ØÖÆ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+-- Display results
+...
+	print(colors.green .. colors.bright .. "Device Type: " .. intype .. "          Platform: " .. fota_platform .. colors.reset)
+...
+	print(colors.yellow .. colors.bright .. "Software Version: " .. remo_web_sw_version .. colors.reset)
+...
+	print(colors.yellow .. colors.bright .. "Hardware Version: " .. hw_version .. colors.reset)
+...
+	print("Manufacturer Website: " .. os_url)
+...
+	print(colors.green .. colors.bright .. "Device Language: " .. Language .. "            Manufacturer: " .. fota_oem .. colors.reset)
+...
+	print(colors.cyan .. colors.bright .. "â•â•â•â•â•â• Network Info â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+...
+	print(colors.yellow .. colors.bright .. "APN Mode: " .. apn_mode .. "            Current APN: " .. default_apn .. colors.reset)
+...
+	print(colors.yellow .. colors.bright .. "DMZ Status: " .. DMZEnable .. "               UPNP Status: " .. upnpEnabled .. colors.reset)
+...
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â• WIFI Info â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+...
+	print(colors.green .. colors.bright .. "WIFI Enabled: " .. wifiEnabled .. "              Max Connections: " .. max_station_num .. colors.reset)
+...
+	print(colors.yellow .. colors.bright .. "Current WIFI Name: " .. SSID1 .. "   Multiple WIFI Names: " .. m_SSID .. colors.reset)
+...
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â• Network Info â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+...
+	print(colors.bright .. "Backend Address: " .. dhcpDns .. colors.reset)
+...
+	print(colors.yellow .. colors.bright .. "Backend Password: " .. admin_Password .. colors.reset)
+...
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â• Password Info â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+	print(colors.yellow .. colors.bright .. "SIM Unlock Code: " .. sim_unlock_code .. colors.reset)
+...
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â• Password Info â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+	print(colors.yellow .. colors.bright .. "SIM Mode: " .. remo_sim_select .. colors.reset)
+	print(colors.yellow .. colors.bright .. "SIM Unlock Code: " .. remo_sim_admin_password .. colors.reset)
+...
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â• Remote Control â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 
--- tr069ÏÔÊ¾
-if tr069_enable ~= "" then
-	print(colors.yellow .. colors.bright .. "tr069(acs)¿ª¹Ø: " .. tr069_enable .. "            tr069µØÖ·£º" .. tr069_acs_url .. colors.reset)
-	print(" ")
-else
-	print(" ")
-end
+-- tr069 display
+	print(colors.yellow .. colors.bright .. "tr069(acs) Switch: " .. tr069_enable .. "            tr069 Addressï¼š" .. tr069_acs_url .. colors.reset)
 
--- ×Ô¶¯Éı¼¶ÏÔÊ¾
-if fota_updateMode ~= "" then
-	if fota_updateMode == "0" then
-		print(colors.yellow .. colors.bright .. "×Ô¶¯Éı¼¶£º¹Ø±Õ" .. colors.reset)
-	else
-		print(colors.yellow .. colors.bright .. "×Ô¶¯Éı¼¶£º ÊÇ" ..
-		      "       ¼ì²âÊ±¼ä: " .. fota_updateIntervalDay .. "Ìì" .. colors.reset)
-	end
-	print(" ")
-else
-	print()
-end
+-- Auto-update display
+		print(colors.yellow .. colors.bright .. "Auto Update: Off" .. colors.reset)
+		print(colors.yellow .. colors.bright .. "Auto Update: On" ..
+		      "       Check Interval: " .. fota_updateIntervalDay .. " days" .. colors.reset)
 
--- ÏŞËÙÏÔÊ¾
-if tc_enable ~= "" then
-	if tc_enable == "0" then
-		print(colors.yellow .. colors.bright .. "ÏŞËÙ¿ªÆô: ·ñ" .. colors.reset)
-	else
-		print(colors.yellow .. colors.bright .. "ÏŞËÙ¿ªÆô: ÊÇ" ..
-		      "       ÉÏ´«ËÙÂÊ: " .. tc_uplink ..
-		      "       ÏÂÔØËÙÂÊ: " .. tc_downlink .. colors.reset)
-	end
-	print(" ")
-else
-	print(colors.red .. colors.bright .. "ÎŞ·¨»ñÈ¡TC£¬Éè±¸Ó¦¸Ã²»Ö§³Ö" .. colors.reset)
-end
+-- Speed limit display
+		print(colors.yellow .. colors.bright .. "Speed Limit: Off" .. colors.reset)
+		print(colors.yellow .. colors.bright .. "Speed Limit: On" ..
+		      "       Upload Speed: " .. tc_uplink ..
+		      "       Download Speed: " .. tc_downlink .. colors.reset)
 
--- Remo×¨ÊôÔ¶³Ì·şÎñÆ÷ÏÔÊ¾
-local has_remo = false
-if remo_root_server_url ~= "" then
-	print(colors.yellow .. colors.bright .. "Ö÷·şÎñÆ÷: " .. remo_root_server_url .. colors.reset)
-	has_remo = true
-end
-if remo_root_server_url2 ~= "" then
-	print(colors.yellow .. colors.bright .. "±¸ÓÃ·şÎñÆ÷: " .. remo_root_server_url2 .. colors.reset)
-	has_remo = true
-end
-if remo_root_server_url3 ~= "" then
-	local url3 = remo_root_server_url3
-	if remo_root_server_port3 ~= "" then
-		url3 = url3 .. ":" .. remo_root_server_port3
-	end
-	if remo_root_server_path3 ~= "" then
-		url3 = url3 .. "/" .. remo_root_server_path3
-	end
-	print(colors.yellow .. colors.bright .. "±¸ÓÃ·şÎñÆ÷: " .. url3 .. colors.reset)
-	has_remo = true
-end
-if remo_config_server_url ~= "" and remo_config_server_path ~= "" then
-	print(colors.yellow .. colors.bright .. "ÅäÖÃ·şÎñÆ÷: " .. remo_config_server_url .. "/" .. remo_config_server_path .. colors.reset)
-	has_remo = true
-end
-if remo_led_server_url ~= "" and remo_led_server_path ~= "" then
-	print(colors.yellow .. colors.bright .. "LED¿ØÖÆ·şÎñÆ÷: " .. remo_led_server_url .. "/" .. remo_led_server_path .. colors.reset)
-	has_remo = true
-end
-if remo_flow_server_url ~= "" and remo_flow_server_path ~= "" then
-	print(colors.yellow .. colors.bright .. "Á÷Á¿ÉÏ±¨·şÎñÆ÷: " .. remo_flow_server_url .. "/" .. remo_flow_server_path .. colors.reset)
-	has_remo = true
-end
-if remo_info_server_url ~= "" and remo_info_server_path ~= "" then
-	print(colors.yellow .. colors.bright .. "ĞÅÏ¢ÉÏ±¨·şÎñÆ÷: " .. remo_info_server_url .. "/" .. remo_info_server_path .. colors.reset)
-	has_remo = true
-end
-if has_remo then
-	print(" ")
-end
+-- Remo-specific remote server display
+	print(colors.yellow .. colors.bright .. "Main Server: " .. remo_root_server_url .. colors.reset)
+	print(colors.yellow .. colors.bright .. "Backup Server: " .. remo_root_server_url2 .. colors.reset)
+	print(colors.yellow .. colors.bright .. "Backup Server: " .. url3 .. colors.reset)
+	print(colors.yellow .. colors.bright .. "Config Server: " .. remo_config_server_url .. "/" .. remo_config_server_path .. colors.reset)
+	print(colors.yellow .. colors.bright .. "LED Control Server: " .. remo_led_server_url .. "/" .. remo_led_server_path .. colors.reset)
+	print(colors.yellow .. colors.bright .. "Flow Report Server: " .. remo_flow_server_url .. "/" .. remo_flow_server_path .. colors.reset)
+	print(colors.yellow .. colors.bright .. "Info Report Server: " .. remo_info_server_url .. "/" .. remo_info_server_path .. colors.reset)
 
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 print()
 
--- °´ÏÂÈÎÒâ¼üÍË³ö³ÌĞò
+-- Press any key to exit the program
 os.execute("pause")
