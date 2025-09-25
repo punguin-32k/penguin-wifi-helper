@@ -1,2 +1,2 @@
 Set objShell = CreateObject("WScript.Shell")
-objShell.Popup "当前版本是Build版本，不代表最终成品", 10, "提示", 64
+objShell.Popup "Current version is a Build version and does not represent the final release.", 10, "Notice", 64
