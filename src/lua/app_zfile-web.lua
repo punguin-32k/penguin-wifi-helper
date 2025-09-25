@@ -1,24 +1,24 @@
 -- web.lua
--- ¼òµ¥µÄjffs2¿É¶ÁĞ´Éè±¸ÉÕÂ¼webºóÌ¨
--- 
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Simple JFFS2 readable and writable device flashing web backend
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- Copyright (C) 2025-2026 Penguin Punguin
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
+-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+-- You should have received a copy of the GNU Affero General Public License. If not, see <https://www.gnu.org/licenses/>.
+--
+-- Contact: 3618679658@qq.com
+-- Assisted in writing by ChatGPT
 
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
+local colors = require("lua\\colors") -- ANSI color code library
+local delay = require("lua\\sleep") -- Countdown operation
 
--- ÉèÖÃ±êÌâÖÕ¶ËÓë¶¨Òå´°¿Ú´óĞ¡
-os.execute("title Æó¶ìWIFIÖúÊÖ_WEBÉÕĞ´¹¤¾ß")
+-- Set terminal title and define window size
+os.execute("title Penguin WIFI Assistant_WEB Flash Tool")
 os.execute("mode con: cols=66 lines=35")
-print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 
--- ¶¨Òå executeADBCommand º¯Êı,Í¨¹ıos.executeµ÷ÓÃadbÃüÁî²¢²¶»ñ½á¹û,ÓÃÓÚÅĞ¶Ï»úÆ÷ÊÇ·ñÎª¿É¶ÁĞ´²¢²¶»ñÊä³ö
+-- Define executeADBCommand function to call adb commands via os.execute and capture results, used to check if device is writable and capture output
 local function executeADBCommand(command)
     local handle = io.popen(command)
     local result = handle:read("*a")
@@ -26,79 +26,79 @@ local function executeADBCommand(command)
     return result
 end
 
--- ¶¨Òå check_file º¯Êı
+-- Define check_file function
 local function check_file()
-    print(colors.blue .. colors.bright .. "ËÑÑ°Éè±¸..." .. colors.reset)
+    print(colors.blue .. colors.bright .. "Searching for devices..." .. colors.reset)
     delay.sleep(4)
     os.execute("cls")
-    -- ÔËĞĞ adb devices ÃüÁî²¢²¶»ñ·µ»Ø½á¹û
+    -- Run adb devices command and capture output
     local adbDevicesCommand = "bin\\adb devices"
     local devicesOutput = executeADBCommand(adbDevicesCommand)
 
-    -- ¼ì²éÊÇ·ñÓĞÉè±¸Á¬½Ó
+    -- Check if any device is connected
     if not string.find(devicesOutput, "\tdevice") then
-        print(colors.red .. "µ±Ç°ÎŞÉè±¸Á¬½Ó" .. colors.reset)
+        print(colors.red .. "No devices currently connected" .. colors.reset)
 		os.execute("pause")
         os.exit(1)
     end
 
-    -- ÔËĞĞ adb touch ÃüÁî²¢²¶»ñ·µ»Ø½á¹û
+    -- Run adb touch command and capture output
     local adbCommand = "bin\\adb shell touch /etc_ro/web/test_file"
     local output = executeADBCommand(adbCommand)
 
-    -- ¼ì²é·µ»Ø½á¹ûÊÇ·ñ°üº¬ "Read-only file system"
+    -- Check if output contains "Read-only file system"
     if string.find(output, "Read") then
-        print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-        print(colors.red .. "¸Ã»úÆ÷ÎªÖ»¶ÁÎÄ¼şÏµÍ³ (squashfs)" .. colors.reset)
-        print(colors.blue .. colors.bright .. "Ç¿ĞĞË¢Èë»áµ¼ÖÂÄúµÄÉè±¸¶ªÊ§ºóÌ¨" .. colors.reset)
+        print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+        print(colors.red .. "This device has a read-only file system (squashfs)" .. colors.reset)
+        print(colors.blue .. colors.bright .. "Forcibly flashing may cause loss of backend on your device" .. colors.reset)
         os.execute("pause")
         os.exit(1)
     else
-        print(colors.green .. colors.bright .."¸Ã»úÆ÷Îª¿ÉĞ´ÎÄ¼şÏµÍ³,Ö§³ÖÎÄ¼şÉÏ´«(¿ÉÄÜÊÇjffs2)".. colors.reset)
-        print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+        print(colors.green .. colors.bright .."This device has a writable file system, supports file upload (possibly JFFS2)" .. colors.reset)
+        print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
     end
 end
 
--- ĞŞ¸´ 5.1-Build-250816
-folderPath = nil -- ÏÈÉùÃ÷È«¾Önil±äÁ¿
+-- Fix 5.1-Build-250816
+folderPath = nil -- Declare global nil variable first
 -- End
 
 local function file()
--- »ñÈ¡ÓÃ»§ÍÏÈëµÄÎÄ¼ş¼ĞÂ·¾¶
-print(colors.yellow .."Çë½«ÎÄ¼ş¼ĞÍÏÈë´Ë´°¿Ú£¬È»ºó°´»Ø³µ¼ü:" ..colors.red)
-  -- ĞŞ¸´ 5.1-Build-250816
-  -- È¥³ılocal,¸ÄÎªÈ«¾Ö±äÁ¿
-  folderPath = io.read("*l") -- ¶ÁÈ¡ÓÃ»§ÊäÈëµÄÎÄ¼ş¼ĞÂ·¾¶
+-- Get folder path dragged in by user
+print(colors.yellow .."Please drag the folder into this window, then press Enter:" ..colors.red)
+  -- Fix 5.1-Build-250816
+  -- Remove local, make it global variable
+  folderPath = io.read("*l") -- Read user input folder path
   -- End
 
--- È¥µô¿ÉÄÜ´æÔÚµÄÒıºÅ
+-- Remove possible quotes
 folderPath = folderPath:gsub("\"", "")
 
--- ¼ì²éÎÄ¼ş¼ĞÂ·¾¶ÊÇ·ñÓĞĞ§
+-- Check if folder path is valid
 local checkCommand = string.format("if exist \"%s\" (echo ok) else (echo not found)", folderPath)
 local handle = io.popen(checkCommand)
 local result = handle:read("*a")
 handle:close()
 
 if not result:find("ok") then
-    print(colors.red .. "ÎŞĞ§µÄÎÄ¼ş¼ĞÂ·¾¶£¡")
+    print(colors.red .. "Invalid folder path!")
 	os.execute("pause")
     os.exit(1)
 end
 end
 
--- »ñÈ¡µ±Ç° Lua ½Å±¾ËùÔÚÄ¿Â¼
+-- Get current Lua script directory
 local function getScriptDirectory()
     local str = arg[0]
     return str:match("(.*/)") or str:match("(.*\\??") or ".\\"
 end
 
--- ´´½¨Ä¿Â¼
+-- Create directory
 local function createDirectory(path)
     os.execute("mkdir \"" .. path .. "\"")
 end
 
--- Ö´ĞĞADBÃüÁî²¢·µ»Ø½á¹û
+-- Execute ADB command and return result
 local function executeADBCommand(command)
     local handle = io.popen(command)
     local result = handle:read("*a")
@@ -106,86 +106,86 @@ local function executeADBCommand(command)
     return result
 end
 
--- ±¸·İ /etc_ro/web ÎÄ¼ş¼Ğµ½Ö¸¶¨Ä¿Â¼
+-- Backup /etc_ro/web folder to specified directory
 local function backupWebFolder(tempBackupPath)
     print()
-    print(colors.green .. "ÕıÔÚ±¸·İÉè±¸ºóÌ¨WEBÎÄ¼ş¼Ğ..." .. colors.blue)
+    print(colors.green .. "Backing up device backend WEB folder..." .. colors.blue)
     local backupCommand = "bin\\adb pull /etc_ro/web \"" .. tempBackupPath .. "\""
     return executeADBCommand(backupCommand)
 end
 
--- ÒÆ¶¯²¢ÖØÃüÃû±¸·İÎÄ¼ş¼Ğ
+-- Move and rename backup folder
 local function moveBackupFolder(tempBackupPath, backupDir)
-    -- Ñ¯ÎÊÓÃ»§ÊäÈëÎÄ¼ş¼ĞÃû³Æ
+    -- Ask user for folder name
 	print()
-    print(colors.yellow .. "ÇëÊäÈë±¸·İÎÄ¼ş¼ĞµÄÃû³Æ:" .. colors.red)
+    print(colors.yellow .. "Please enter the name of the backup folder:" .. colors.red)
     local folderName = io.read()
 	print(colors.blue)
 
-    -- ÒÆ¶¯²¢ÖØÃüÃûÎÄ¼ş¼Ğ
+    -- Move and rename folder
     local moveCommand = "move /Y \"" .. tempBackupPath .. "\" \"" .. backupDir .. folderName .. "\""
     local moveResult = os.execute(moveCommand)
     print(colors.reset)
 	
-    -- ¼ì²éÒÆ¶¯½á¹û
+    -- Check move result
     if moveResult then
 	    print()
-        print(colors.green .. "±¸·İÍê³É£¬ÎÄ¼şÒÑ±£´æµ½: " .. backupDir .. folderName .. colors.reset)
+        print(colors.green .. "Backup completed, files saved to: " .. backupDir .. folderName .. colors.reset)
 		os.execute("explorer TQ")
     else
 	    print()
-        print(colors.red .. "ÒÆ¶¯ÎÄ¼şÊ§°Ü£¬Çë¼ì²éÈ¨ÏŞ¡£" .. colors.reset)
+        print(colors.red .. "Failed to move files, please check permissions." .. colors.reset)
     end
 end
 
--- ·â×°Õû¸ö±¸·İÁ÷³ÌµÄº¯Êı
+-- Encapsulate the entire backup process
 local function Backup_web()
     local scriptDir = getScriptDirectory()
 
-    -- ÉèÖÃ±¸·İ±£´æÂ·¾¶
-    local tempBackupPath = scriptDir .. "web_backup" -- Ö±½Ó±¸·İµ½½Å±¾ËùÔÚÄ¿Â¼
+    -- Set backup save path
+    local tempBackupPath = scriptDir .. "web_backup" -- Backup directly to script directory
     local backupDir = scriptDir .. "TQ\\"
 
-    -- Ñ¯ÎÊÓÃ»§ÊÇ·ñ±¸·İ /etc_ro/web ÎÄ¼ş¼Ğ
+    -- Ask user if they want to backup /etc_ro/web folder
 	print()
-    print(colors.yellow .. colors.bright .. "ÊÇ·ñ±¸·İÉè±¸Ô­ºóÌ¨? (y/n)" .. colors.reset)
+    print(colors.yellow .. colors.bright .. "Do you want to backup the device original backend? (y/n)" .. colors.reset)
     local userInput = io.read()
 
     if userInput == "y" or userInput == "Y" then
-        -- ÓÃ»§Ñ¡Ôñ±¸·İ£¬Ö´ĞĞ±¸·İ²Ù×÷
+        -- User chooses backup, perform backup
         local backupResult = backupWebFolder(tempBackupPath)
         
-        -- ¼ì²é±¸·İ½á¹û
+        -- Check backup result
         if backupResult and backupResult:find("error") then
 		    print()
-            print(colors.red .. "±¸·İÊ§°Ü£¬Çë¼ì²éÉè±¸Á¬½Ó¼°È¨ÏŞ¡£" .. colors.reset)
+            print(colors.red .. "Backup failed, please check device connection and permissions." .. colors.reset)
         else
             moveBackupFolder(tempBackupPath, backupDir)
         end
     else
-        -- ÓÃ»§Ñ¡Ôñ²»±¸·İ
+        -- User chooses not to backup
 		print()
-        print(colors.blue .. "ÒÑÌø¹ı±¸·İ²Ù×÷" .. colors.reset)
+        print(colors.blue .. "Backup skipped" .. colors.reset)
     end
 
-    print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 end
 
 local function up_web()
--- É¾³ıÉè±¸ÉÏÔ­ÓĞµÄ /etc_ro/web ÎÄ¼ş¼Ğ
+-- Delete original /etc_ro/web folder on device
 local deleteCommand = "bin\\adb shell rm -rf /etc_ro/web"
 os.execute(deleteCommand)
 
--- ÉÏ´«Õû¸öÎÄ¼ş¼Ğµ½Éè±¸
+-- Upload entire folder to device
 local uploadCommand = string.format("bin\\adb push \"%s\" /etc_ro/web", folderPath)
 os.execute(uploadCommand)
 print()
-print(colors.green .. colors.bright .."ÉÏ´«Íê³É,Éè±¸webÒÑÌæ»»!"..colors.reset)
+print(colors.green .. colors.bright .."Upload complete, device web replaced!"..colors.reset)
 end
 
 os.execute("bin\\adb shell mount -o remount,rw /")
-check_file() -- ¼ì²éÉè±¸ÊÇ·ñÔÊĞí¶ÁĞ´
-file() -- ÈÃÓÃ»§ÍĞÈëÎÄ¼ş
-Backup_web() -- ½øĞĞºóÌ¨µÄ±¸·İ
-up_web() -- É¾³ıÉè±¸ÉÏÔ­ÓĞµÄWEB²¢ÉÏ´«ĞÂµÄÎÄ¼ş
+check_file() -- Check if device allows read/write
+file() -- Let user drag in folder
+Backup_web() -- Perform backend backup
+up_web() -- Delete device's original WEB and upload new files
 os.execute("pause")
