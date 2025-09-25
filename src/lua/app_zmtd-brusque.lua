@@ -1,49 +1,58 @@
 -- zmtd-brusque
--- Æó¶ìWiFiÖúÊÖ Ë¢Ğ´Æ÷V2.1
--- 
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Penguin WiFi Assistant Flasher V2.1
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- Copyright (C) 2025-2026 Punguin
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU Affero General Public License as published
+-- by the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+-- GNU Affero General Public License for more details.
+--
+-- You should have received a copy of the GNU Affero General Public License.
+-- If not, see <https://www.gnu.org/licenses/>.
+--
+-- Contact: 3618679658@qq.com
+-- Created with assistance from ChatGPT
 
--- Éè´°¿Ú±äÁ¿
-os.execute("title Æó¶ìWiFiÖúÊÖ  MTDË¢Ğ´V2.1")
+-- Set window variables
+os.execute("title Penguin WiFi Assistant  MTD Flasher V2.1")
 os.execute("mode con: cols=80 lines=32")
 
--- ÒıÈëÍâ²¿¿â
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
+-- Load external libraries
+local colors = require("lua\\colors") -- ANSI color codes library
+local delay = require("lua\\sleep")   -- countdown operations
 
--- ÖÕ¶ËÓëÃüÁîÖ´ĞĞ
+-- Terminal and command execution
 local function exec(cmd)
-    --print("[Ö´ĞĞÃüÁî] " .. cmd)
+    --print("[Executing command] " .. cmd)
     local f = io.popen(cmd .. " 2>&1")
     local res = f:read("*a")
     f:close()
-    --print("[ÃüÁîÊä³ö] " .. res)
+    --print("[Command output] " .. res)
     return res
-	-- Èç¹ûĞèÒªµ÷ÊÔ³ÌĞò£¬½«ÒÔÉÏprintÈ¥³ı×¢ÊÍ
+    -- Uncomment the print statements above if you need to debug
 end
 
--- ¼ì²éÊÇ·ñÓĞ adb Éè±¸Á¬½Ó
+-- Check if an ADB device is connected
 local function is_adb_device_connected()
-	local check = io.popen("bin\\adb get-state")
-	local state = check:read("*a")
-	check:close()
+    local check = io.popen("bin\\adb get-state")
+    local state = check:read("*a")
+    check:close()
 
-	if not state:match("device") then -- µ±Ã»ÓĞÉè±¸Ê±¾ÍÊä³ö
-	    print()
-		print(colors.red .."[´íÎó] Î´¼ì²âµ½ADBÉè±¸£¬ÇëÁ¬½ÓÉè±¸ºóÖØÊÔ¡£".. colors.reset)
-		print(colors.green .."ÌáÊ¾:Èç¹ûÉè±¸´¦ÓÚÁ¬½Óµ«ÀëÏßÄ£Ê½£¬Éè±¸adbÒ²ÊÇ²»¿ÉÓÃ¡£".. colors.reset)
-		print()
-		print("°´ÈÎÒâ¼üÍË³ö...")
-		io.read()  -- »ñÈ¡ÓÃ»§ÊäÈë
-		os.exit(1)  -- ·Ç0±íÊ¾Òì³£ÍË³ö
-	end
+    if not state:match("device") then -- Output when no device is detected
+        print()
+        print(colors.red .."[Error] No ADB device detected. Please connect a device and try again.".. colors.reset)
+        print(colors.green .."Tip: If the device is connected but offline, ADB cannot communicate with it.".. colors.reset)
+        print()
+        print("Press any key to exit...")
+        io.read()  -- Wait for user input
+        os.exit(1)  -- Non-zero exit indicates error
+    end
 end
 
 local function copy_to_workdir(src_path)
@@ -56,7 +65,7 @@ local function get_local_md5(file)
     local output = exec(string.format('bin\\md5sum.exe "%s"', file))
     local md5 = output:match("^(%x+)")
     if not md5 then
-        error("[!] ÎŞ·¨½âÎö±¾µØMD5£¬Êä³öÎª: " .. output)
+        error("[!] Failed to parse local MD5, output: " .. output)
     end
     return md5
 end
@@ -70,22 +79,22 @@ local function get_device_md5(device_file)
     local output = exec(string.format('bin\\adb shell md5sum "%s"', device_file))
     local md5 = output:match("^(%x+)")
     if not md5 then
-        error("[!] ÎŞ·¨½âÎöÉè±¸¶ËMD5£¬Êä³öÎª: " .. output)
+        error("[!] Failed to parse device MD5, output: " .. output)
     end
     return md5
 end
 
 local function compare_md5(local_md5, device_md5)
-    print("\n" .. colors.cyan .. colors.bright .."------------------ ".. colors.blue .. colors.bright .."ÎÄ¼ş´«ÊäĞ£Ñé".. colors.reset .. colors.cyan .. colors.bright .." ------------------")
-    print(string.format(colors.cyan .. colors.bright .."[".. colors.blue .. colors.bright .."*".. colors.cyan .. colors.bright .."]".. colors.blue .." ±¾µØÎÄ¼ş :    ".. colors.reset .. colors.green .."%s", local_md5))
-    print(string.format(colors.cyan .. colors.bright .."[".. colors.blue .. colors.bright .."*".. colors.cyan .. colors.bright .."]".. colors.blue .." Éè±¸ÎÄ¼ş :    ".. colors.reset .. colors.green .."%s", device_md5))
+    print("\n" .. colors.cyan .. colors.bright .."------------------ ".. colors.blue .. colors.bright .."File Transfer Verification".. colors.reset .. colors.cyan .. colors.bright .." ------------------")
+    print(string.format(colors.cyan .. colors.bright .."[".. colors.blue .. colors.bright .."*".. colors.cyan .. colors.bright .."]".. colors.blue .." Local file :    ".. colors.reset .. colors.green .."%s", local_md5))
+    print(string.format(colors.cyan .. colors.bright .."[".. colors.blue .. colors.bright .."*".. colors.cyan .. colors.bright .."]".. colors.blue .." Device file :   ".. colors.reset .. colors.green .."%s", device_md5))
     if local_md5:lower() == device_md5:lower() then
-        print(colors.cyan .. colors.bright .."[".. colors.green .."¡Ì".. colors.cyan .. colors.bright .."]".. colors.green ..  colors.bright .." Ğ£ÑéÒ»ÖÂ£¬ÎÄ¼ş´«Êä³É¹¦")
-		print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
+        print(colors.cyan .. colors.bright .."[".. colors.green .."âˆš".. colors.cyan .. colors.bright .."]".. colors.green ..  colors.bright .." Verification passed, file transfer successful")
+        print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
     else
-        print(colors.cyan .. colors.bright .."[".. colors.red .."!".. colors.cyan .. colors.bright .."]".. colors.red .. colors.bright .."Ğ£ÑéÊ§°Ü£¬ÎÄ¼ş¿ÉÄÜËğ»µ£¬ÒÑÖĞÖ¹Ë¢Ğ´£¬ÇëÖØÆôÉè±¸ºóÖØĞÂ¿ªÊ¼")
-		print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
-		os.execute("pause")
+        print(colors.cyan .. colors.bright .."[".. colors.red .."!".. colors.cyan .. colors.bright .."]".. colors.red .. colors.bright .." Verification failed, file may be corrupted. Aborting flash, please restart the device and try again")
+        print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
+        os.execute("pause")
         os.exit(1)
     end
 end
@@ -100,40 +109,34 @@ local function prepare_device_environment()
 end
 
 local function optional_backup()
-    print(colors.blue .. colors.bright .."ÊÇ·ñ½øĞĞ±¸·İµ±Ç°·ÖÇø".. colors.cyan .. colors.bright .."(".. colors.red .."±¸·İ½«ºÄ·Ñ½Ï³¤Ê±¼ä".. colors.cyan .. colors.bright ..")".. colors.yellow .. colors.bright .." [ĞèÒªÊäyes£¬»Ø³µÌø¹ı]")
+    print(colors.blue .. colors.bright .."Do you want to backup the current partition".. colors.cyan .. colors.bright .." (".. colors.red .."backup may take a long time".. colors.cyan .. colors.bright ..")".. colors.yellow .. colors.bright .." [type 'yes', press Enter to skip]")
     local choice = io.read()
-	print(colors.reset)
+    print(colors.reset)
     if choice:lower() == "yes" then
-        -- »ñÈ¡µ±Ç°Ê±¼ä²¢¸ñÊ½»¯Îª: ÄêÔÂÈÕĞ¡Ê±·ÖÖÓ (ÀıÈç£º202506151519)
         local timestamp = os.date("%Y%m%d%H%M")
-
-        -- »ñÈ¡ÓÃ»§×ÀÃæÂ·¾¶
         local userprofile = os.getenv("USERPROFILE")
-        local backup_folder = userprofile .. "\\Desktop\\MTD·ÖÇø±¸·İ"
-        local filename = string.format("MTD4±¸·İ%s.bin", timestamp)
+        local backup_folder = userprofile .. "\\Desktop\\MTD_Backup"
+        local filename = string.format("MTD4_Backup_%s.bin", timestamp)
         local desktop_path = backup_folder .. "\\" .. filename
 
-        -- ´´½¨±¸·İÎÄ¼ş¼Ğ£¨È·±£´æÔÚ£©
         os.execute('mkdir "' .. backup_folder .. '" 2>nul')
 
-        -- Éú³ÉreadmeÎÄ¼ş
         local readme_path = backup_folder .. "\\readme.txt"
         local readme_file = io.open(readme_path, "w")
         if readme_file then
-            readme_file:write("´ËÎÄ¼ş¼ĞÓÉÆó¶ìÖúÊÖMTDË¢Ğ´Æ÷Éú³É£¬ÄúÒÑÑ¡Ôñ½«MTDÎÄ¼ş±¸·İ¡£\n±¾¹¤¾ßÖ§³Ö¶à´Î±¸·İ²¢²»¸²¸ÇÔ­ÎÄ¼ş£¬ÄúÎŞĞèÉ¾³ıÔ­ÎÄ¼ş¡£\n\nÄú¿ÉÒÔ½«±¸·İµÄMTDÎÄ¼şÖØĞÂĞ´ÈëÉè±¸¡£")
+            readme_file:write("This folder was generated by Penguin Assistant MTD Flasher. You chose to backup MTD files.\nMultiple backups are supported without overwriting existing files.\n\nYou can restore these MTD files to your device.")
             readme_file:close()
         end
 
-        -- Ö´ĞĞ±¸·İ
         local command = string.format('bin\\adb pull /dev/mtd4 "%s" > NUL 2>&1', desktop_path)
         os.execute(command)
 
-        print(colors.cyan .. colors.bright .."[".. colors.green .."¡Ì".. colors.cyan .. colors.bright .."]".. colors.blue .. colors.bright .." ±¸·İÍê³É£¬ÒÑ±£´æÖÁ×ÀÃæ:\n".. colors.yellow .. colors.bright .. desktop_path .. colors.reset)
-		print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
-		
+        print(colors.cyan .. colors.bright .."[".. colors.green .."âˆš".. colors.cyan .. colors.bright .."]".. colors.blue .. colors.bright .." Backup complete. Saved to desktop:\n".. colors.yellow .. colors.bright .. desktop_path .. colors.reset)
+        print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
+        
     else
-        print(colors.cyan .. colors.bright .."[".. colors.red .."!".. colors.cyan .. colors.bright .."]".. colors.red .." ÒÑÑ¡ÔñÎŞĞè±¸·İ£¬Ìø¹ı±¸·İ²½Öè".. colors.reset)
-		print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
+        print(colors.cyan .. colors.bright .."[".. colors.red .."!".. colors.cyan .. colors.bright .."]".. colors.red .." Backup skipped as chosen".. colors.reset)
+        print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
     end
 end
 
@@ -147,45 +150,44 @@ local function upload_flash_files()
 end
 
 local function write_flash_script()
-    -- ´«ÈëÉè±¸
     adb_push("file\\flash.sh", "/mnt/userdata/temp/flash.sh")
     exec('bin\\adb shell chmod +x /mnt/userdata/temp/flash.sh')
 end
 
 local function final_confirmation()
     print()
-    print(colors.yellow .. colors.bright .."È«²¿ÎÄ¼şÒÑ".. colors.green .."ÍÆËÍ³É¹¦".. colors.yellow .. colors.bright .."£¬ÎÄ¼şÍêÕû".. colors.green .."Ğ£ÑéÍê³É")
-	print()
-    print(colors.yellow .. colors.bright .."Çë¶ş´ÎÈ·ÈÏÄúÌá¹©µÄ".. colors.red .."ÎÄ¼şÊÇ·ñÕıÈ·".. colors.yellow .. colors.bright .."£¬ÕâÊÇÄú".. colors.red .."×îºóµÄ»ú»á¡£")
-    print(colors.yellow .. colors.bright .."Èç¹û".. colors.green .."È·ÈÏÎŞÎóÇëÁ¬Ğø°´5´Î»Ø³µ".. colors.yellow .. colors.bright .."¡£".. colors.red .."·ñÔò£¬Á¢¿Ì°Îµô»úÆ÷!".. colors.reset)
+    print(colors.yellow .. colors.bright .."All files have been ".. colors.green .."pushed successfully".. colors.yellow .. colors.bright ..", file verification complete")
+    print()
+    print(colors.yellow .. colors.bright .."Please double-check the files you provided".. colors.red .." - this is your last chance.")
+    print(colors.yellow .. colors.bright .."If correct, press Enter 5 times consecutively".. colors.yellow .. colors.bright ..". ".. colors.red .."Otherwise, unplug the device immediately!".. colors.reset)
     for i = 1, 5 do io.read() end
 end
 
 local function execute_flash()
-    print(colors.red .. colors.bright .."¾¯¸æ£º".. colors.green .."¼´½«¿ªÊ¼Ë¢Ğ´".. colors.yellow .. colors.bright .."£¬".. colors.red .. colors.bright .."±¾´°¿Ú»á±»adbÕ¼ÓÃ¡£".. colors.reset)
-    print(colors.red .. colors.bright .."´ËÊ±²»Òª²Ù×÷¼üÅÌ£¬ÒÔ·À´íÎóÖ¸ÁîÊäÈë£¡£¡£¡".. colors.reset)
-	print(colors.green .. colors.bright .."¶Á¶®ÁËÇëÔÙ°´Á½´Î»Ø³µ£¬¸ĞĞ»ÅäºÏ£¡".. colors.reset)
+    print(colors.red .. colors.bright .."Warning:".. colors.green .." Flashing will begin soon".. colors.yellow .. colors.bright ..", this window will be occupied by ADB.".. colors.reset)
+    print(colors.red .. colors.bright .."Do NOT use the keyboard to avoid incorrect commands!!!".. colors.reset)
+    print(colors.green .. colors.bright .."Read this, then press Enter twice. Thank you!".. colors.reset)
     for i = 1, 2 do io.read() end
-    print(colors.cyan .. colors.bright .."[".. colors.green .."¡Ì".. colors.cyan .. colors.bright .."]".. colors.green ..  colors.bright .."Ë¢Ğ´Á÷³ÌÕıÔÚ½øĞĞ£¬²»Òª¹Ø±Õ±¾´°¿Ú£¬ÇëÄÍĞÄµÈ´ıÉè±¸ÖØÆô....".. colors.reset)
+    print(colors.cyan .. colors.bright .."[".. colors.green .."âˆš".. colors.cyan .. colors.bright .."]".. colors.green ..  colors.bright .." Flashing in progress, do not close this window. Please wait for device reboot...".. colors.reset)
     os.execute("bin\\adb shell /mnt/userdata/temp/flash.sh")
-	print()
-    print(colors.cyan .. colors.bright .."[".. colors.red .."!".. colors.cyan .. colors.bright .."]".. colors.green ..  colors.bright .."Éè±¸Ë¢Ğ´Íê³É£¬ÇëµÈ´ıÉè±¸¿ª»ú£¬¸ĞĞ»Ê¹ÓÃ¡£".. colors.reset)
-	print(colors.green .. colors.bright .."»úÆ÷²åÉÏÉÁÒ»ÏÂµÆ¹Ø»ú¾ÍÊÇ×©ÁË£¬ÇëÓÃ±à³ÌÆ÷¾È»Ø£¡".. colors.reset)
-    os.execute("pause") -- °´ÏÂÈÎÒâ¼ü
+    print()
+    print(colors.cyan .. colors.bright .."[".. colors.red .."!".. colors.cyan .. colors.bright .."]".. colors.green ..  colors.bright .." Device flash complete. Wait for device startup. Thank you.".. colors.reset)
+    print(colors.green .. colors.bright .."If the device blinks and shuts down, it may brick. Use a programmer to recover!".. colors.reset)
+    os.execute("pause")
 end
 
 local function print_flash()
-    print(colors.cyan .. colors.bright .."[".. colors.blue .. colors.bright .."$".. colors.cyan .. colors.bright .."]".. colors.blue .." ÇëµÈ´ıÎÄ¼şÓë±äÁ¿²ÎÊı´«ÈëÉè±¸......".. colors.reset)
+    print(colors.cyan .. colors.bright .."[".. colors.blue .. colors.bright .."$".. colors.cyan .. colors.bright .."]".. colors.blue .." Please wait while files and variables are pushed to the device...".. colors.reset)
 end
 
 local function print_tip()
     print(colors.cyan .. colors.bright .."---------------------------------------------------".. colors.reset)
 end
 
------------------- Ö÷Á÷³Ì ------------------
+------------------ Main Flow ------------------
 is_adb_device_connected()
 
-print(colors.yellow .. colors.bright .."Çë½«ÒªĞ´ÈëµÄÎÄ¼şÍÏÈë´Ë´°¿Úºó°´»Ø³µ£º".. colors.red)
+print(colors.yellow .. colors.bright .."Drag the file you want to flash into this window and press Enter:".. colors.red)
 local user_path = io.read()
 print(colors.reset)
 copy_to_workdir(user_path)
