@@ -1,110 +1,96 @@
 -- helper.lua
--- Æó¶ìWIFIÖúÊÖ Ò»¸öÕûºÏ¹¤¾ßÏä,ÈÃÓÃ»§±ãĞ¯¹ÜÀíÉè±¸
+-- Penguin WIFI Helper: an integrated toolbox for convenient device management
 -- 
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Copyright (C) 2025-2026 Penguin
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+-- You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
-
-
--- ÉèÖÃ±êÌâÖÕ¶ËÓë¶¨Òå´°¿Ú´óĞ¡
-os.execute("title Æó¶ìWIFIÖúÊÖ(ChatGPTĞ­ÖúÖÆ×÷±àĞ´)                      µ±Ç°°æ±¾: 5.2        ×÷ÕßQQ:3618679758£¬¹Ù·½QQÈº:725700912 ")
+-- Contact us: 3618679658@qq.com
+-- Assisted by ChatGPT in development and writing
+-- Set terminal title and window size
+os.execute("title Penguin WIFI Helper (Assisted by ChatGPT)                      Current Version: 5.2        Author QQ:3618679758, Official QQ Group:725700912 ")
 os.execute("mode con: cols=113 lines=32")
-
--- ÒıÈëÍâ²¿¿â
-local path = require("lua\\path") -- ¹¤¾ßÂ·¾¶±äÁ¿¿â
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
-
--- »ñÈ¡½Å±¾µ±Ç°Ä¿Â¼
+-- Import external libraries
+local path = require("lua\\path") -- Utility path variable library
+local colors = require("lua\\colors") -- ANSI color code library
+local delay = require("lua\\sleep") -- Countdown operation
+-- Get current script directory
 local script_dir = debug.getinfo(1, "S").source:match("@(.*[/\\])")
-
--- ÉèÖÃADBÃüÁî²¢·µ»Ø½á¹û
-local function exec_command(cmd)       -- ¶¨ÒåcmommandÀàĞÍ±êÇ©,Ê¹ÓÃÀàËÆcmdÀ´½øĞĞ
-    local file = io.popen(cmd)         -- ´¦Àí·µ»ØÀàĞÍcmd
-    local output = file:read("*all")   -- ÀàĞÍAll
-    file:close()                       -- ·µ»ØÖØ¶¨Òå
-    return output                      -- Êä³ö
+-- Execute ADB command and return result
+local function exec_command(cmd)       -- Define command type label, similar to cmd
+    local file = io.popen(cmd)         -- Handle returned cmd type
+    local output = file:read("*all")   -- Read all output
+    file:close()                       -- Close file handle
+    return output                      -- Return output
 end
-
--- ¼ì²éADBÁ¬½Ó×´Ì¬
+-- Check ADB connection status
 local function check_adb_status()
-    local adb_path = path.adb -- µ÷ÓÃadb.exe
-    -- ÔËĞĞ adb devices ÃüÁîÀ´»ñÈ¡Á¬½ÓµÄÉè±¸ÁĞ±í
+    local adb_path = path.adb -- Call adb.exe
+    -- Run adb devices command to get connected device list
     local adb_output = exec_command(adb_path .. " devices 2>nul")
-
-    -- ¼ì²éÊä³öÊÇ·ñ°üº¬ÓĞĞ§Éè±¸ĞÅÏ¢
-    local has_device = false        -- Æ¥ÅäÄÚÈİdevice
-    local is_offline = false        -- Æ¥ÅäÄÚÈİoffline
-    for line in adb_output:gmatch("[^\r\n]+") do   -- Éè¶¨Êä³öÀàĞÍÆ¥Åä
-        if line:match("device$") then      -- Æ¥ÅäÄÚÈİdevice
-            has_device = true              -- Èç¹ûÊÇ,Êä³ödevice¶ÔÓ¦ÄÚÈİ
-        elseif line:match("offline") then  -- Æ¥ÅäÄÚÈİoffline
-            is_offline = true              -- Èç¹ûÊÇ,Êä³ödeviceÄÚÈİ²¢°üº¬offline²ÎÊı
+    -- Check if output contains valid device info
+    local has_device = false        -- Match "device"
+    local is_offline = false        -- Match "offline"
+    for line in adb_output:gmatch("[^\r\n]+") do   -- Set output line matching
+        if line:match("device$") then      -- Match "device"
+            has_device = true              -- If matched, mark as connected
+        elseif line:match("offline") then  -- Match "offline"
+            is_offline = true              -- If matched, mark as offline
         end
     end
-
-    -- ¸ù¾İ¼ì²â½á¹ûÊä³ö£¬²¢Éè¶¨ÎÄ±¾ÑÕÉ«
+    -- Output result with color formatting
     if has_device and not is_offline then
-        print(colors.yellow .. colors.bright .. "Éè±¸×´Ì¬£º" .. colors.reset .. colors.green .. colors.bright .."ÒÑÁ¬½Ó" .. colors.reset)
+        print(colors.yellow .. colors.bright .. "Device Status: " .. colors.reset .. colors.green .. colors.bright .."Connected" .. colors.reset)
     elseif is_offline then
-        print(colors.yellow .. colors.bright .. "Éè±¸×´Ì¬£º" .. colors.reset .. colors.green ..  colors.bright .."ÒÑÁ¬½Ó(".. colors.reset .. colors.red .."ÀëÏß" .. colors.reset .. colors.green ..  colors.bright ..")".. colors.reset)
+        print(colors.yellow .. colors.bright .. "Device Status: " .. colors.reset .. colors.green ..  colors.bright .."Connected (".. colors.reset .. colors.red .."Offline" .. colors.reset .. colors.green ..  colors.bright ..")".. colors.reset)
     else
-        print(colors.yellow .. colors.bright .. "Éè±¸×´Ì¬£º" .. colors.reset .. colors.red .. "ÎŞÉè±¸" .. colors.reset)
+        print(colors.yellow .. colors.bright .. "Device Status: " .. colors.reset .. colors.red .. "No Device" .. colors.reset)
     end
 end
-
--- nv ²éÑ¯ÃüÁî
+-- NV query command
 function get_nv_value(param)
 	local command = "bin\\adb shell nv get " .. param
 	local handle = io.popen(command)
 	local result = handle:read("*a")
 	handle:close()
-
 	local value = result:gsub("%s+", "")
 	return value
 end
-
--- ·â×°¼ì²é´®¿ÚÁ¬½ÓµÄº¯Êı
+-- Encapsulated function to check serial port connection
 function check_serial()
-    -- ¼ì²âÏµÍ³ÉÏÊÇ·ñÓĞ¿ÉÓÃµÄ´®¿Ú
+    -- Detect if any serial port is available on the system
     local function is_serial_port_connected()
         for i = 1, 256 do
             local com_port = "\\\\.\\COM" .. i
             local file = io.open(com_port, "r")
             if file then
                 file:close()
-                return true -- Èç¹û´ò¿ª³É¹¦£¬ËµÃ÷ÓĞ´®¿Ú
+                return true -- If opened successfully, serial port exists
             end
         end
-        return false -- Èç¹ûÃ»ÓĞ´ò¿ª³É¹¦£¬ËµÃ÷Ã»ÓĞ´®¿Ú
+        return false -- If none opened, no serial port
     end
-
-    -- Êä³ö½á¹û
+    -- Output result
     if is_serial_port_connected() then
-	    print(colors.yellow .. colors.bright .. "´®¿Ú×´Ì¬(ATµÈ)£º" .. colors.reset .. colors.green .. colors.bright .."ÒÑÁ¬½Ó" .. colors.reset)
+	    print(colors.yellow .. colors.bright .. "Serial Port Status (AT etc.): " .. colors.reset .. colors.green .. colors.bright .."Connected" .. colors.reset)
     else
-	    print(colors.yellow .. colors.bright .. "´®¿Ú×´Ì¬(ATµÈ)£º" .. colors.reset .. colors.red .. "ÎŞÉè±¸" .. colors.reset)
+	    print(colors.yellow .. colors.bright .. "Serial Port Status (AT etc.): " .. colors.reset .. colors.red .. "No Device" .. colors.reset)
     end
 end
-
--- ¶¨ÒåÒ»¸öº¯ÊıÀ´»ñÈ¡ÔÆ¶Ë°æ±¾ĞÅÏ¢
+-- Function to fetch cloud version info
 local function check_version()
-    local local_version = "5.2"  -- Ìæ»»Îª±¾µØµÄ°æ±¾ºÅ
-    local temp_version_file = "version.ini" -- ÁÙÊ±°æ±¾ÎÄ¼ş
-    
-    -- ´Ó°æ±¾ÎÄ¼şÖĞÌáÈ¡ÔÆ¶Ë°æ±¾ºÅ
+    local local_version = "5.2"  -- Replace with local version number
+    local temp_version_file = "version.ini" -- Temporary version file
+    -- Extract cloud version from version file
     local function get_version_from_html(file_path)
         local file = io.open(file_path, "r")
         if not file then
             return nil
         end
         for line in file:lines() do
-            local version = line:match("%d+%.%d+[%w%-]*") -- "%d.%d"Îª°æ±¾ºÅ¸ñÊ½,¶ÔÓ¦µÄ°æ±¾ÎªX.X(Êı×Ö¸ñÊ½)
+            local version = line:match("%d+%.%d+[%w%-]*") -- "%d.%d" is version format, e.g., X.X (numeric)
             if version then
                 file:close()
                 return version
@@ -113,66 +99,60 @@ local function check_version()
         file:close()
         return nil
     end
-    
     local cloud_version = get_version_from_html(temp_version_file)
-    --os.remove(temp_version_file) -- É¾³ıÁÙÊ±°æ±¾ÎÄ¼ş(´Ó4.5°æ±¾¿ªÊ¼,½ûÓÃ¸ÃÖ¸Áî)
-
-    -- Êä³ö°æ±¾ĞÅÏ¢
+    --os.remove(temp_version_file) -- Delete temporary version file (disabled since v4.5)
+    -- Output version info
     if cloud_version then
-        print(colors.bright .."×îĞÂ°æ±¾: " .. cloud_version .. "  µ±Ç°°æ±¾: " .. local_version .. colors.reset)
+        print(colors.bright .."Latest Version: " .. cloud_version .. "  Current Version: " .. local_version .. colors.reset)
     else
-        print(colors.bright .."ÎŞ·¨»ñÈ¡ÔÆ¶Ë°æ±¾" .. colors.reset)
+        print(colors.bright .."Failed to retrieve cloud version" .. colors.reset)
     end
 end
-
--- ¼ì²éÊÇ·ñÓĞ adb Éè±¸Á¬½Ó
+-- Check if an ADB device is connected
 local function is_adb_device_connected()
 	local check = io.popen("bin\\adb get-state")
 	local state = check:read("*a")
 	check:close()
-
-	if not state:match("device") then -- µ±Ã»ÓĞÉè±¸Ê±¾ÍÊä³ö
+	if not state:match("device") then -- Output if no device
 	    print()
-		print(colors.red .."[´íÎó] Î´¼ì²âµ½ADBÉè±¸£¬ÇëÁ¬½ÓÉè±¸ºóÖØÊÔ¡£".. colors.reset)
-		print(colors.green .."ÌáÊ¾:Èç¹ûÉè±¸´¦ÓÚÁ¬½Óµ«ÀëÏßÄ£Ê½£¬Éè±¸adbÒ²ÊÇ²»¿ÉÓÃ¡£".. colors.reset)
+		print(colors.red .."[Error] No ADB device detected. Please connect a device and try again.".. colors.reset)
+		print(colors.green .."Tip: If the device is connected but offline, ADB will be unavailable.".. colors.reset)
 		print()
-		io.read()  -- »ñÈ¡ÓÃ»§ÊäÈë
+		io.read()  -- Wait for user input
 		os.execute("bin\\lua54 lua\\helper.lua")
-		io.read()  -- »ñÈ¡ÓÃ»§ÊäÈë
+		io.read()  -- Wait for user input
 	end
 end
-
-local function mtd_check() --ÏÔÊ¾Éè±¸MTD×´Ì¬
-        print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-        print("ÒÔÏÂÎªÄúµÄÉè±¸MTD¹ÒÔØ×´Ì¬")
+local function mtd_check() -- Display device MTD mount status
+        print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+        print("Below is your device's MTD mount status")
         print()
         os.execute("bin\\adb shell cat /proc/mtd")
         print()
-		print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-        print("Ò»°ãÇé¿öÏÂ,mtd4:'rootfs' ")
-		print(" Ğ¡²¿·Ö»úÆ÷ÊÇmtd4:'imagefs'")
-		print("  ±¾¹¤¾ßÏäÄ¿Ç°½öÖ§³Ömtd4:'rootfs'µÄ»úÆ÷")
-		print("   ºóÆÚ¿ÉÄÜ¿¼ÂÇÌí¼Ómtd5»úÆ÷Ö§³Ö")
+		print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+        print("Normally, mtd4:'rootfs'")
+		print(" A few devices use mtd4:'imagefs'")
+		print(" This toolbox currently only supports devices with mtd4:'rootfs'")
+		print(" Support for mtd5 devices may be added later")
 		print()
 		os.execute("pause")
 end
-
-local function install_drive() --ÈıºÏÒ»Çı¶¯°²×°
-  print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-  print("ÇëÑ¡ÔñÒª°²×°µÄÇı¶¯(Ã»°²¹ı½¨ÒéÈ«°²)£º")
+local function install_drive() -- Triple-in-one driver installer
+  print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+  print("Please select the driver to install (if never installed, it's recommended to install all):")
   print()
-  print(colors.cyan .. colors.bright .. "           1.Í¨ÓÃ°²×¿ADBÇı¶¯      2.ÖĞĞËÎ¢Çı¶¯      3.ÒÆÔ¶µÄASR×¨ÓÃÇı¶¯       4.×Ï¹âSPDÍ¨ÓÃÇı¶¯" .. colors.reset)
+  print(colors.cyan .. colors.bright .. "           1. Universal Android ADB Driver      2. ZTE ZXIC Driver      3. Quectel ASR Dedicated Driver       4. UNISOC SPD Universal Driver" .. colors.reset)
   print()
-  print(colors.red .. colors.bright .."ÌáÊ¾:ÖĞĞËÇı¶¯ÎªÃë°²Çı¶¯,°²×°¹ı³ÌÖ»»áµ¯³öcmd¡£Èç¹û°²×°³É¹¦Ôò»áÖ±½Ó¹Ø±Õ¡£".. colors.reset)
+  print(colors.red .. colors.bright .."Tip: The ZTE driver is a quick-install driver; installation only shows a CMD window. If successful, it closes automatically.".. colors.reset)
   print()
-  io.write(colors.green .. "ÇëÊäÈëÊı×Ö²¢°´ Enter ¼ü: " .. colors.reset)
+  io.write(colors.green .. "Enter a number and press Enter: " .. colors.reset)
   local drive_selection = io.read()
     if drive_selection == "1" then
      os.execute("start file\\drive\\vivo-drive.exe")
     elseif drive_selection == "2" then
      os.execute("start file\\drive\\ZXIC_Develop_Driver.exe")
 	 print()
-	 io.write(colors.green .. "°´ÈÎÒâ¼ü¿ªÊ¼°²×°²¹³äÇı¶¯......" .. colors.reset)
+	 io.write(colors.green .. "Press any key to start installing supplementary driver......" .. colors.reset)
 	 io.read()
      os.execute("start file\\drive\\zxicser.exe")
     elseif drive_selection == "3" then
@@ -181,39 +161,38 @@ local function install_drive() --ÈıºÏÒ»Çı¶¯°²×°
      os.execute("start file\\drive\\SPD_Driver\\DriverSetup.exe")
     end
 end
-
-local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
-  print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+local function set_adb()   -- Set device ADB (code from v3.21, integrated in v4.0)
+  print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
   print()
-  -- ÈÃÓÃ»§ÊäÈëIPµØÖ·²¢±£´æÎªÁÙÊ±±äÁ¿ipAddress
-  print(colors.red .. colors.bright .. "¾¯¸æ!ÇëÏÈÁ¬½ÓÉè±¸WIFI»òÍøÂç,·ñÔò³ÌĞò¿¨ËÀ[»¬»üĞ¦]" .. colors.reset)
+  -- Prompt user to enter IP address and store as temporary variable ipAddress
+  print(colors.red .. colors.bright .. "Warning! Please connect to the device's Wi-Fi or network first, otherwise the program will hang [smiley]" .. colors.reset)
   print()
   print()
-  io.write(colors.green .. "Éè±¸WEBµØÖ·(ÀıÈç 192.168.100.1): "  .. colors.red .. colors.bright)
+  io.write(colors.green .. "Device WEB address (e.g., 192.168.100.1): "  .. colors.red .. colors.bright)
   local ipAddress = io.read()
-  print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-  -- ´òÓ¡²Ù×÷Ñ¡Ïî²Ëµ¥
+  print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+  -- Print operation menu
   print()
-  print(colors.cyan .. colors.bright .."Ê¹ÓÃĞ¡ÌùÊ¿:".. colors.reset .. colors.green .. "²¿·ÖÉè±¸³§¼ÒÉ¾³ıadbdºó¶Ë,µ¼ÖÂ¿ªÍêadbºóÒÀÈ»ÊÇÎŞ·¨Ê¹ÓÃ×´Ì¬(ÀëÏßÄ£Ê½),ÏêÇéÇë¿´ÖúÊÖÖ÷Ò³Éè±¸×´Ì¬")
+  print(colors.cyan .. colors.bright .."Tips:".. colors.reset .. colors.green .. " Some manufacturers remove the adbd backend, so even after enabling ADB, the device remains unusable (offline mode). See device status on the helper homepage.")
   print()
-  print(colors.cyan .. colors.bright .." =------".. colors.magenta .. colors.bright .."Ñ¡ÔñÄ£Ê½" .. colors.cyan .. colors.bright .."------------------------------------------------------------------------------------------------=")
+  print(colors.cyan .. colors.bright .." =------".. colors.magenta .. colors.bright .."Select Mode" .. colors.cyan .. colors.bright .."------------------------------------------------------------------------------------------------=")
   print(colors.cyan .. colors.bright .." =                                                                                                              =")
-  print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."1. µ÷ÊÔÄ£Ê½(ADB+AT+ÍøÂç)     2. ¹¤³§¶Ë¿ÚÄ£Ê½(½öAT)       3. ½öÏµÍ³Ä£Ê½(É÷ÓÃ)        4. ¹Ø±ÕËùÓĞÄ£Ê½       ".. colors.cyan ..colors.bright .."=")
+  print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."1. Debug Mode (ADB+AT+Network)     2. Factory Port Mode (AT Only)       3. System Mode Only (Use with Caution)        4. Disable All Modes       ".. colors.cyan ..colors.bright .."=")
   print(colors.cyan .. colors.bright .." =                                                                                                              =")
-  print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."5. Remo×¨ÓÃµ÷ÊÔÄ£Ê½(ADB+AT+ÍøÂç)                                                                          ".. colors.cyan ..colors.bright .."=")
+  print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."5. Remo Dedicated Debug Mode (ADB+AT+Network)                                                                          ".. colors.cyan ..colors.bright .."=")
   print(colors.cyan .. colors.bright .." =                                                                                                              =")
   print(colors.cyan .. colors.bright .." =--------------------------------------------------------------------------------------------------------------=")
   print()
-  -- ÈÃÓÃ»§Ñ¡ÔñÏàÓ¦µÄ²Ù×÷²¢±£´æÁÙÊ±±äÁ¿
-  io.write(colors.green .. "ÇëÊäÈëÊı×Ö²¢°´ Enter ¼ü: ".. colors.red .. colors.bright)
+  -- Let user select operation and store in temporary variable
+  io.write(colors.green .. "Enter a number and press Enter: ".. colors.red .. colors.bright)
   local adb_selection = io.read()
-  -- É¸Ñ¡±äÁ¿Êı¾İ²¢Ö´ĞĞ¶ÔÓ¦²Ù×÷
+  -- Filter input and execute corresponding action
     if adb_selection == "1" then
       print(colors.blue .. colors.bright)
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=SET_DEVICE_MODE&debug_enable=2"')
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=SET_DEVICE_MODE&debug_enable=1"')
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=SET_DEVICE_MODE&debug_enable=1"')
-	  -- 5.1ÕûºÏQrzlÃÜÂë
+	  -- Integrated Qrzl password in v5.1
 	  print()
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=SET_DEVICE_MODE&debug_enable=1&password=coolfish666@Qiruizhilian20241202"')
 	  print()
@@ -222,107 +201,121 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=SET_DEVICE_MODE&debug_enable=1&password=MM888@Qiruizhilian20241202"')
 	  print()
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=SET_DEVICE_MODE&debug_enable=1&password=159258@Qiruizhilian20241202"')
-	  print(colors.green .. colors.bright .."\nÉÔºóÖØÆôÉè±¸(5Ãë)....." .. colors.blue .. colors.bright)
+	  print(colors.green .. colors.bright .."
+Rebooting device in 5 seconds....." .. colors.blue .. colors.bright)
       delay.sleep(5)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=REBOOT_DEVICE"')
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=REBOOT_DEVICE"')
-      print(colors.green .. colors.bright .."\n²Ù×÷ÒÑÍê³É£¬ÉÔºó·µ»Ø" .. colors.reset)
+      print(colors.green .. colors.bright .."
+Operation completed, returning shortly" .. colors.reset)
       delay.sleep(3)
     elseif adb_selection == "2" then
       print(colors.blue .. colors.bright)
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=SET_DEVICE_MODE&debug_enable=2"')
-      print(colors.green .. colors.bright .."\nÉÔºóÖØÆôÉè±¸(5Ãë)....." .. colors.blue .. colors.bright)
+      print(colors.green .. colors.bright .."
+Rebooting device in 5 seconds....." .. colors.blue .. colors.bright)
       delay.sleep(5)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=REBOOT_DEVICE"')
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=REBOOT_DEVICE"')
-      print(colors.green .. colors.bright .."\n²Ù×÷ÒÑÍê³É£¬ÉÔºó·µ»Ø" .. colors.reset)
+      print(colors.green .. colors.bright .."
+Operation completed, returning shortly" .. colors.reset)
       delay.sleep(3)
     elseif adb_selection == "3" then
       print(colors.blue .. colors.bright) 
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=SET_DEVICE_MODE&debug_enable=3"')
-      print(colors.green .. colors.bright .."\nÉÔºóÖØÆôÉè±¸(5Ãë)....." .. colors.blue .. colors.bright)
+      print(colors.green .. colors.bright .."
+Rebooting device in 5 seconds....." .. colors.blue .. colors.bright)
       delay.sleep(5)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=REBOOT_DEVICE"')
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=REBOOT_DEVICE"')
-      print(colors.green .. colors.bright .."\n²Ù×÷ÒÑÍê³É£¬ÉÔºó·µ»Ø" .. colors.reset)
+      print(colors.green .. colors.bright .."
+Operation completed, returning shortly" .. colors.reset)
       delay.sleep(3)
     elseif adb_selection == "4" then
       print(colors.blue .. colors.bright)
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=SET_DEVICE_MODE&debug_enable=0"')
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=ID_SENDAT&at_str_data=AT%2BZMODE%3D0"')
-	  print(colors.green .. colors.bright .."\nÉÔºóÖØÆôÉè±¸(5Ãë)....." .. colors.blue .. colors.bright)
+	  print(colors.green .. colors.bright .."
+Rebooting device in 5 seconds....." .. colors.blue .. colors.bright)
       delay.sleep(5)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=REBOOT_DEVICE"')
       os.execute('bin\\curl "http://'..ipAddress..'/goform/goform_set_cmd_process?goformId=REBOOT_DEVICE"')
-      print(colors.green .. colors.bright .."\n²Ù×÷ÒÑÍê³É£¬ÉÔºó·µ»Ø" .. colors.reset)
+      print(colors.green .. colors.bright .."
+Operation completed, returning shortly" .. colors.reset)
       delay.sleep(3)
-    elseif adb_selection == "5" then -- Õâ²¿·Ö³­Ï®ÁËufitool
-	  print(colors.red .. colors.bright .."\n\n¾¯¸æ:¸Ã·½Ê½À´Ô´ÓÚRemoÄÚ²¿ÈËÔ±" .. colors.blue .. colors.bright)
-	  print(colors.red .. colors.bright .."½öÊÊÓÃÓÚµÚËÄ´ú»úĞÍÒÔÇ°µÄ°æ±¾(¼´24Äê6ÔÂÖ®Ç°),ÆäËû°æ±¾¹À¼Æ»áÓöµ½´íÎó" .. colors.blue .. colors.bright)
-	  print("\n")
-	  print(colors.green .. colors.bright .."\nÕıÔÚÏòÏµÍ³·¢ËÍÇëÇó....." .. colors.blue .. colors.bright)
+    elseif adb_selection == "5" then -- This part copied from ufitool
+	  print(colors.red .. colors.bright .."
+Warning: This method comes from Remo internal staff" .. colors.blue .. colors.bright)
+	  print(colors.red .. colors.bright .."Only applicable to 4th-gen devices and earlier (i.e., before June 2024). Other versions may encounter errors." .. colors.blue .. colors.bright)
+	  print("
+")
+	  print(colors.green .. colors.bright .."
+Sending request to system....." .. colors.blue .. colors.bright)
 	  delay.sleep(2)
 	  print(colors.blue .. colors.bright)
 	  os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=LOGIN&password=cmVtb19zdXBlcl9hZG1pbl8yMjAx"')
 	  os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=LOGIN&password=YWRtaW4%3D"')
-	  print(colors.green .. colors.bright .."\n¼ì²âµ½×èÖ¹,ÕıÔÚÈÆ¹ı....." .. colors.blue .. colors.bright)
+	  print(colors.green .. colors.bright .."
+Block detected, bypassing....." .. colors.blue .. colors.bright)
 	  delay.sleep(3)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=REMO_SIM_SELECT_R1865&isTest=false&sim_option_id=3&select_sim_mode=1"')
-	  print(colors.green .. colors.bright .."\nÒÑÕÒµ½ÁÙÊ±APi,ÕıÔÚ·´Ïò½Ù³Ödebug mode....." .. colors.blue .. colors.bright)
+	  print(colors.green .. colors.bright .."
+Temporary API found, hijacking debug mode in reverse....." .. colors.blue .. colors.bright)
 	  delay.sleep(2)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=SysCtlUtal&action=System_MODE&debug_enable=1"')
 	  delay.sleep(2)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=ID_SENDAT&at_str_data=AT%2BZMODE%3D1"')
 	  delay.sleep(2)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?goformId=SET_DEVICE_MODE&debug_enable=1"')
-      print(colors.green .. colors.bright .."\nÉÔºóÖØÆôÉè±¸(5Ãë)....." .. colors.blue .. colors.bright)
+      print(colors.green .. colors.bright .."
+Rebooting device in 5 seconds....." .. colors.blue .. colors.bright)
       delay.sleep(5)
       os.execute('bin\\curl "http://'..ipAddress..'/reqproc/proc_post?isTest=false&goformId=RESTORE_FACTORY_SETTINGS"')
-      print(colors.green .. colors.bright .."\n²Ù×÷ÒÑÍê³É£¬ÉÔºó·µ»Ø" .. colors.reset)
+      print(colors.green .. colors.bright .."
+Operation completed, returning shortly" .. colors.reset)
       delay.sleep(3)
 	elseif About_stealing == "stealing" then
-	  A = "°³³ĞÈÏRemoÕâ¶Î´úÂëÍµÇÔ×ÔUfitool"
-	  B = "ÎÒÈÌÊÜ²»ÁËÃ¿ÔÂÄÇ¼¸´ÎµÄÊ¹ÓÃ»ú»áÁË"
-	  C = "Ï£ÍûËÕ¸çÄÜÔ­ÁÂÎÒ°É,ÍûÁÂ½â"
-	  D = "ÍµÇÔĞĞÎªÈ·Êµ²»ÎÄÃ÷,ÕâÑù×Ó×öÎÒĞÄÀïÒ²ºÜ²»°²"
-	  E = "×ÜÖ®Ï£ÍûËÕ¸çÄÜÔ­ÁÂÎÒ,¿´µ½Õâ¶Î´úÂë¾ÍÁªÏµÎÒ°É"
-	  print ("Test,remo adbd By ufitool")
+	  A = "I admit the Remo code segment was stolen from Ufitool"
+	  B = "I can't stand the limited usage times per month anymore"
+	  C = "Hope Brother Su can forgive me, please understand"
+	  D = "Stealing is indeed uncivilized; I feel uneasy doing this"
+	  E = "Anyway, hope Brother Su forgives meâ€”please contact me if you see this code"
+	  print ("Test, remo adbd By ufitool")
     end
  end
- 
  local intype = get_nv_value("zcgmi")
  local fota_platform = get_nv_value("fota_platform")
- local function ufi_nv_set() --Í¨¹ıÉèÖÃ±ê×¼NV²ÎÊıÀ´ÓÅ»¯Éè±¸
-  print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+ local function ufi_nv_set() -- Optimize device by setting standard NV parameters
+  print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
   print()
   if intype ~= "" then
-	  print(colors.yellow .. colors.bright .. "Éè±¸ÀàĞÍ: ".. colors.blue .. intype .. colors.reset)
+	  print(colors.yellow .. colors.bright .. "Device Type: ".. colors.blue .. intype .. colors.reset)
       print()
 	else
 	  print()
   end
-  print(colors.cyan .. colors.bright .."Ê¹ÓÃĞ¡ÌùÊ¿:".. colors.reset .. colors.green .. "ÔÚÈ¥¿ØµÄÊ±ºòÈç¹ûÉè±¸ÊÇjffs2µÈÏµÍ³£¬ÄÇÃ´¹¤¾ß»á³¢ÊÔ½«Ô¶¿Ø³ÌĞò²ù³ı¡£")
+  print(colors.cyan .. colors.bright .."Tips:".. colors.reset .. colors.green .. " When removing remote control, if the device uses jffs2 or similar systems, the tool will attempt to remove remote control programs.")
   print()
-  print(colors.cyan .. colors.bright .." =------".. colors.magenta .. colors.bright .."Ñ¡ÔñÄ£Ê½" .. colors.cyan .. colors.bright .."------------------------------------------------------------------------------------------------=")
+  print(colors.cyan .. colors.bright .." =------".. colors.magenta .. colors.bright .."Select Mode" .. colors.cyan .. colors.bright .."------------------------------------------------------------------------------------------------=")
   print(colors.cyan .. colors.bright .." =                                                                                                              =")
-  print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."     1. SZXFÍ¨ÓÃÓÅ»¯       2.ZTE±¾¼ÒÓÅ»¯(SZXK)      3.Ò×Á¬Í¨ÓÃÓÅ»¯(ALK)       4.¸ñĞĞV1.3½µ¼¶V1.2          ".. colors.cyan ..colors.bright .."=")
+  print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."     1. SZXF Universal Optimization       2. ZTE Native Optimization (SZXK)      3. YiLian Universal Optimization (ALK)       4. Gehang V1.3 Downgrade to V1.2          ".. colors.cyan ..colors.bright .."=")
   print(colors.cyan .. colors.bright .." =                                                                                                              =")
   print(colors.cyan .. colors.bright .." =    ".. colors.reset .. colors.yellow .."                                                                                                          ".. colors.cyan ..colors.bright .."=")
-  print(colors.cyan .. colors.bright .." =                                                                      ÒÔºó»áÂ½ĞøÖ§³Ö¸ü¶àÉè±¸,ÇëÆÚ´ıÖúÊÖota    =")
+  print(colors.cyan .. colors.bright .." =                                                                      More devices will be supported via OTA updatesâ€”stay tuned!    =")
   print(colors.cyan .. colors.bright .." =--------------------------------------------------------------------------------------------------------------=")
   print()
-  -- ÈÃÓÃ»§Ñ¡ÔñÏàÓ¦µÄ²Ù×÷²¢±£´æÁÙÊ±±äÁ¿
-  io.write(colors.green .. "ÇëÊäÈëÊı×Ö²¢°´ Enter ¼ü: ".. colors.red .. colors.bright)
+  -- Let user select operation and store in temporary variable
+  io.write(colors.green .. "Enter a number and press Enter: ".. colors.red .. colors.bright)
   local selection = io.read()
   print(colors.reset)
-  -- É¸Ñ¡±äÁ¿Êı¾İ²¢Ö´ĞĞ¶ÔÓ¦²Ù×÷
+  -- Filter input and execute corresponding action
     if selection == "1" then
 	is_adb_device_connected()
 	print()
-	print("¹ÒÔØ¶ÁĞ´")
+	print("Mounting as read-write")
 	os.execute("bin\\adb shell mount -o remount,rw /")
 	print()
-	print("¹Ø±Õ²¢´Û¸ÄÉı¼¶")
+	print("Disabling and tampering with OTA updates")
 	os.execute("bin\\adb shell nv set fota_updateMode=0")
 	os.execute("bin\\adb shell nv set fota_updateIntervalDay=365")
 	os.execute("bin\\adb shell nv set fota_platform=Punguin")
@@ -332,7 +325,7 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 	os.execute("bin\\adb shell nv set fota_version_name=")
 	os.execute("bin\\adb shell nv set fota_upgrade_result_internal=")
 	os.execute("bin\\adb shell nv set fota_oem=QEJ")
-	print("´Û¸ÄÔ¶¿ØÅäÖÃ")
+	print("Tampering with remote control config")
 	os.execute("bin\\adb shell rm -rf /bin/terminal_mgmt")
 	os.execute("bin\\adb shell rm -rf /sbin/ip_ratelimit.sh")
 	os.execute("bin\\adb shell nv set traffic_mgmt_enable=0")
@@ -343,7 +336,7 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 	os.execute("bin\\adb shell nv set os_url=http://punguin.cn/")
 	os.execute("bin\\adb shell nv set TM_SERVER_NAME=reportinfo.punguin.cn")
 	os.execute("bin\\adb shell nv set HOST_FIELD=reportinfo.punguin.cn")
-	print("ÔöÇ¿¹¦ÄÜ")
+	print("Enhancing features")
 	os.execute("bin\\adb shell nv set sim_auto_switch_enable=0")
 	os.execute("bin\\adb shell nv set sim_switch=1")
 	os.execute("bin\\adb shell nv set sim_unlock_code=az952#")
@@ -354,51 +347,50 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 	os.execute("bin\\adb shell nv set ussd_enable=1")
 	os.execute("bin\\adb shell nv set pdp_type=IPv4v6")
 	os.execute("bin\\adb shell nv set zcgmi=SZXF-Punguin")
-	print("±£´æNVÉèÖÃ")
+	print("Saving NV settings")
 	os.execute("bin\\adb shell nv save")
-	print(colors.green .. colors.bright .."nv±à¼­Æ÷£º²ÎÊıÒÑ±£´æ".. colors.reset)
+	print(colors.green .. colors.bright .."NV Editor: Parameters saved".. colors.reset)
 	print()
-	print(colors.blue .."ÕıÔÚ¸øÉè±¸¼ÓË®Ó¡".. colors.reset)
-	os.execute([[bin\\adb shell "echo 'copyright = ´ËÉè±¸Èí¼şÓÉ &copy; Æó¶ì¾ıPunguin ĞŞ¸Ä' >> /etc_ro/web/i18n/Messages_zh-cn.properties"]])
+	print(colors.blue .."Adding watermark to device".. colors.reset)
+	os.execute([[bin\\adb shell "echo 'copyright = Device software modified by &copy; Penguin Punguin' >> /etc_ro/web/i18n/Messages_zh-cn.properties"]])
 	os.execute([[bin\\adb shell "echo 'copyright = Software by: &copy; Penguin Revise' >> /etc_ro/web/i18n/Messages_en.properties"]])
 	os.execute([[bin\\adb shell "echo 'nv set cr_version=SZXF-Punguin_P001-20250601 &' >> /etc/rc"]])
-	print(colors.green .. colors.bright .."³öÏÖRead-only file systemÊÇÕı³£µÄ".. colors.reset)
+	print(colors.green .. colors.bright .."'Read-only file system' is normal".. colors.reset)
 	print()
 	print()
 	print()
 	print()
 	print()
-	print(colors.red .."ĞŞ¸ÄÍê³É£¬»Ö¸´³ö³§½«»á¶ªÊ§¸ü¸Ä£¬²»Òª»Ö¸´³ö³§".. colors.reset)
+	print(colors.red .."Modification complete. Changes will be lost after factory resetâ€”do not reset.".. colors.reset)
 	print()
-	os.execute("pause")  -- µÈ´ıÓÃ»§°´ÈÎÒâ¼ü¼ÌĞø
+	os.execute("pause")  -- Wait for user keypress
 	elseif selection == "2" then
 	  is_adb_device_connected()
-	        print(colors.blue .. colors.bright .."¹ÒÔØ¶ÁĞ´..." .. colors.reset)
+	        print(colors.blue .. colors.bright .."Mounting as read-write..." .. colors.reset)
             os.execute("bin\\adb shell mount -o remount,rw /")
-            -- ³¢ÊÔÔÚ /sbin/ ÖĞ´´½¨ test ÎÄ¼ş
+            -- Try creating test file in /sbin/
 		    print()
-	     	print(colors.blue .. colors.bright .."¼ì²éÎÄ¼şÏµÍ³..." .. colors.reset)
-            local createFileCmd = "bin\\adb shell touch /sbin/test 2>&1" -- ²¶»ñ´íÎóÊä³ö
+	     	print(colors.blue .. colors.bright .."Checking filesystem..." .. colors.reset)
+            local createFileCmd = "bin\\adb shell touch /sbin/test 2>&1" -- Capture error output
             local handle = io.popen(createFileCmd)
             local result = handle:read("*a")
             handle:close()
-
-            -- ¼ì²éÊä³öÖĞÊÇ·ñ°üº¬"Read-only"
+            -- Check if output contains "Read-only"
             if result:find("Read") then
-		       print(colors.red .. "ÄúµÄÉè±¸ÏµÍ³Ö»¶Á,Çë³¢ÊÔ±à³ÌÆ÷" .. colors.reset)
+		       print(colors.red .. "Your device system is read-only. Please try using a programmer." .. colors.reset)
 			   print()
 			   os.execute("pause")
             else
-            -- ĞŞ¸ÄÉè±¸
-			--os.execute("pause") -- µ÷ÊÔÊ±Ê¹ÓÃ,·ÀÖ¹´íÎóµÄĞŞ¸Ä
-			print(colors.green .. colors.bright .."ÒÑ¹ÒÔØ¸ùÄ¿Â¼Îª¿É¶ÁĞ´£¬ÕıÔÚÍ£Ö¹³§¼Ò·şÎñ...".. colors.reset)
+            -- Modify device
+			--os.execute("pause") -- For debugging, prevents erroneous modification
+			print(colors.green .. colors.bright .."Root mounted as read-write. Stopping manufacturer services...".. colors.reset)
 			os.execute("bin\\adb shell killall fota_Update")
 			os.execute("bin\\adb shell killall fota_upi")
 			os.execute("bin\\adb shell killall zte_mqtt_sdk &")
 			print()
-			print(colors.green .. colors.bright .."ÒÑ¹Ø±Õ¶à¸ö½ø³Ì".. colors.reset)
+			print(colors.green .. colors.bright .."Multiple processes stopped".. colors.reset)
 			print()
-			print(colors.yellow .."ÕıÔÚÓÅ»¯Éè±¸nvÅäÖÃ...".. colors.reset)
+			print(colors.yellow .."Optimizing device NV config...".. colors.reset)
 			os.execute("bin\\adb shell nv set mqtt_syslog_level=0")
 			os.execute("bin\\adb shell nv set dm_enable=0")
 			os.execute("bin\\adb shell nv set mqtt_enable=0")
@@ -412,15 +404,15 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 			os.execute("bin\\adb shell nv set fota_version_name=")
 			os.execute("bin\\adb shell nv set fota_upgrade_result_internal=")
 			os.execute("bin\\adb shell nv save")
-			print(colors.green .. colors.bright .."nv±à¼­Æ÷£º²ÎÊıÒÑ±£´æ".. colors.reset)
+			print(colors.green .. colors.bright .."NV Editor: Parameters saved".. colors.reset)
 			print()
-	        print(colors.blue .."ÕıÔÚ¸øÉè±¸¼ÓË®Ó¡".. colors.reset)
-			os.execute([[bin\\adb shell "echo 'copyright = ´ËÉè±¸Èí¼şÓÉ &copy; Æó¶ì¾ıPunguin ĞŞ¸Ä' >> /etc_ro/web/i18n/Messages_zh-cn.properties"]])
+	        print(colors.blue .."Adding watermark to device".. colors.reset)
+			os.execute([[bin\\adb shell "echo 'copyright = Device software modified by &copy; Penguin Punguin' >> /etc_ro/web/i18n/Messages_zh-cn.properties"]])
 			os.execute([[bin\\adb shell "echo 'copyright = Software by: &copy; Penguin Revise' >> /etc_ro/web/i18n/Messages_en.properties"]])
 			os.execute([[bin\\adb shell "echo 'nv set cr_version=SZXK-Punguin_P049U-20250601 &' >> /etc/rc"]])
-			print(colors.green .. colors.bright .."³öÏÖRead-only file systemÊÇÕı³£µÄ".. colors.reset)
+			print(colors.green .. colors.bright .."'Read-only file system' is normal".. colors.reset)
 			print()
-			print(colors.yellow .."ÕıÔÚĞŞ¸ÄÉè±¸ÎÄ¼ş".. colors.reset)
+			print(colors.yellow .."Modifying device files...".. colors.reset)
 			os.execute("bin\\adb push file\\gsmtty /bin")
 			os.execute('bin\\adb shell "chmod +x /bin/gsmtty"')
 			os.execute("bin\\adb shell gsmtty AT+ZCARDSWITCH=0")
@@ -431,42 +423,40 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
             os.execute("bin\\adb shell rm -rf /sbin/start_update_app.sh")
             os.execute("bin\\adb shell rm -rf /bin/fota_Update")
             os.execute("bin\\adb shell rm -rf /bin/fota_upi")
+			print()
+			print(colors.yellow .."Adding kill commands to startup script...".. colors.reset)
 			os.execute([[bin\\adb shell "echo 'killall zte_de &' >> /etc/rc"]])
             os.execute([[bin\\adb shell "echo 'killall ztede_timer &' >> /etc/rc"]])
             os.execute([[bin\\adb shell "echo 'killall zte_mqtt_sdk &' >> /etc/rc"]])
 			print()
-			print(colors.yellow .."ÇåÀíÁÙÊ±ÎÄ¼ş...".. colors.reset)
+			print(colors.yellow .."Cleaning temporary files...".. colors.reset)
 			os.execute("bin\\adb shell rm -r -rf /bin/miniupnp")
 			os.execute("bin\\adb shell rm -r -rf /bin/gsmtty")
 			os.execute("bin\\adb shell reboot")
 			print()
-			print(colors.green .. colors.bright .."Íê³É,ÇëµÈ´ıÉè±¸¿ª»ú".. colors.reset)
+			print(colors.green .. colors.bright .."Done. Please wait for device to boot up.".. colors.reset)
 	        print()
 	        print()
 	        print()
 	        print()
-	        os.execute("pause")  -- µÈ´ıÓÃ»§°´ÈÎÒâ¼ü¼ÌĞø
+	        os.execute("pause")  -- Wait for user keypress
 		end
 	elseif selection == "3" then
-		-- ¼ò»¯ÃüÁîµ÷ÓÃ·â×°
+		-- Simplified command execution wrapper
 		local function run(cmd)
 			os.execute(cmd)
 		end
-
 		local function adb(cmd)
 			run("bin\\adb " .. cmd)
 		end
-
 		local function ateer(cmd)
 			run("bin\\ATeer " .. cmd)
 		end
-
-		-- ¼ì²é ADB ×´Ì¬
+		-- Check ADB state
 		local function get_adb_state()
 			local handle = io.popen("bin\\adb devices 2>nul")
 			local result = handle:read("*a")
 			handle:close()
-
 			local serial, state = result:match("(%d+%S*)%s+(%S+)")
 			if serial and state then
 				return state
@@ -474,37 +464,31 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 				return nil
 			end
 		end
-
-		-- »½ĞÑ adbd
+		-- Wake up adbd
 		local function wake_adb()
-			print("³¢ÊÔ»½ĞÑÉè±¸ ADB...")
+			print("Attempting to wake up device ADB...")
 			ateer("at+shell=adbd")
 		end
-
-		-- ¼ì²éÏµÍ³ÊÇ·ñÎªÖ»¶Á
+		-- Check if system is read-only
 		local function is_system_readonly()
 			local tmp_output_file = "adb_tmp.txt"
 			adb("shell mount -o remount,rw /")
 			run('bin\\adb shell "touch /sbin/test" 2>&1 > ' .. tmp_output_file)
-
 			local file = io.open(tmp_output_file, "r")
 			if not file then
-				print("ÎŞ·¨¶ÁÈ¡ÁÙÊ±Êä³öÎÄ¼ş¡£")
-				return true -- ³ö´íÊ±Ä¬ÈÏÖ»¶Á
+				print("Unable to read temporary output file.")
+				return true -- Default to read-only on error
 			end
-
 			local output = file:read("*a")
 			file:close()
 			os.remove(tmp_output_file)
-
 			return output:lower():match("read") ~= nil
 		end
-
-		-- Ö´ĞĞÖ»¶ÁÏµÍ³µÄ´¦ÀíÂß¼­
+		-- Handle read-only system logic
 		local function handle_readonly()
 		  print()
-			print(colors.green .. colors.bright .."ÏµÍ³ÎªÖ»¶Á£¬ÕıÔÚÖ´ĞĞÖ»¶ÁÏµÍ³µÄ×¨Êô´úÂë...".. colors.reset)
-			print(colors.yellow .."ÕıÔÚÓÅ»¯Éè±¸nvÅäÖÃ...".. colors.reset)
+			print(colors.green .. colors.bright .."System is read-only. Executing read-only specific code...".. colors.reset)
+			print(colors.yellow .."Optimizing device NV config...".. colors.reset)
 			adb("shell nv set dm_enable=0")
 			adb("shell nv set mqtt_enable=0")
 			adb("shell nv set tc_enable=0")
@@ -519,11 +503,11 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 			adb("shell nv set alk_sim_select=0")
 			adb("shell nv set path_sh=/etc_rw/sbin")
 			adb("shell nv save")
-			print(colors.green .. colors.bright .."nv±à¼­Æ÷£º²ÎÊıÒÑ±£´æ".. colors.reset)
+			print(colors.green .. colors.bright .."NV Editor: Parameters saved".. colors.reset)
 			print()
 			adb("shell mkdir -p /etc_rw/sbin")
 			adb("shell cp /sbin/*.sh /etc_rw/sbin/")
-			print(colors.yellow .."ÕıÔÚĞŞ¸ÄÉè±¸ÎÄ¼ş".. colors.reset)
+			print(colors.yellow .."Modifying device files...".. colors.reset)
 			adb([[shell "echo 'killall iccid_check' >> /etc_rw/sbin/global.sh"]])
 			adb([[shell "echo 'killall mqtt_client' >> /etc_rw/sbin/global.sh"]])
 			adb([[shell "echo 'killall vsim' >> /etc_rw/sbin/global.sh"]])
@@ -531,134 +515,127 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 			adb("shell reboot")
 			print()
 			print()
-			print(colors.red .."ĞŞ¸ÄÍê³É£¬»Ö¸´³ö³§½«»á¶ªÊ§¸ü¸Ä£¬²»Òª»Ö¸´³ö³§".. colors.reset)
-			os.execute("pause")  -- µÈ´ıÓÃ»§°´ÈÎÒâ¼ü¼ÌĞø
+			print(colors.red .."Modification complete. Changes will be lost after factory resetâ€”do not reset.".. colors.reset)
+			os.execute("pause")  -- Wait for user keypress
 		end
-
-		-- Ö´ĞĞ¿É¶ÁĞ´ÏµÍ³µÄ´¦ÀíÂß¼­
+		-- Handle read-write system logic
 		local function handle_rw()
-			print(colors.green .. colors.bright .."ÏµÍ³¿É¶ÁĞ´£¬ÕıÔÚÖ´ĞĞ¿É¶ÁĞ´ÏµÍ³µÄ×¨Êô´úÂë...".. colors.reset)
-			print(colors.yellow .."ÕıÔÚÓÅ»¯Éè±¸nvÅäÖÃ...".. colors.reset)
+			print(colors.green .. colors.bright .."System is read-write. Executing read-write specific code...".. colors.reset)
+			print(colors.yellow .."Optimizing device NV config...".. colors.reset)
 			adb([[shell "echo 'tc_enable=0' >> /etc_ro/default/default_parameter_sys"]])
 			adb([[shell "echo 'alk_sim_select=0' >> /etc_ro/default/default_parameter_user"]])
 			adb([[shell "echo 'fota_updateMode=0' >> /etc_ro/default/default_parameter_user"]])
 			adb("shell nv set tc_enable=0")
 			adb("shell nv setro alk_server=0.1.2.3")
 			adb("shell nv save")
-			print(colors.green .. colors.bright .."nv±à¼­Æ÷£º²ÎÊıÒÑ±£´æ".. colors.reset)
-			print(colors.blue .."ÕıÔÚ¸øÉè±¸¼ÓË®Ó¡".. colors.reset)
-			adb([[shell "echo 'copyright = ´ËÉè±¸Èí¼şÓÉ &copy; Æó¶ì¾ıPunguin ĞŞ¸Ä' >> /etc_ro/web/i18n/Messages_zh-cn.properties"]])
+			print(colors.green .. colors.bright .."NV Editor: Parameters saved".. colors.reset)
+			print(colors.blue .."Adding watermark to device".. colors.reset)
+			adb([[shell "echo 'copyright = Device software modified by &copy; Penguin Punguin' >> /etc_ro/web/i18n/Messages_zh-cn.properties"]])
 			adb([[shell "echo 'copyright = Software by: &copy; Penguin Revise' >> /etc_ro/web/i18n/Messages_en.properties"]])
 			adb([[shell "echo 'nv set cr_version=ALK-Punguin_P049U-20250813 &' >> /etc/rc"]])
 			print()
-			print(colors.yellow .."ÕıÔÚĞŞ¸ÄÉè±¸ÎÄ¼ş".. colors.reset)
+			print(colors.yellow .."Modifying device files...".. colors.reset)
 			adb("shell rm -rf bin/iccid_check")
 			adb("shell rm -rf bin/mqtt_client")
 			adb("shell rm -rf bin/vsim")
 			adb("shell rm -rf bin/rmc")
 			adb("shell rm -rf /sbin/fl_set_iptables.sh")
-			print(colors.red .."ĞŞ¸ÄÍê³É£¬²Ù×÷ÒÑ¹Ì»¯£¬Éè±¸¿ÉÒÔ»Ö¸´³ö³§".. colors.reset)
-			os.execute("pause")  -- µÈ´ıÓÃ»§°´ÈÎÒâ¼ü¼ÌĞø
+			print(colors.red .."Modification complete. Changes are persistentâ€”device can be factory reset safely.".. colors.reset)
+			os.execute("pause")  -- Wait for user keypress
 		end
-
-		-- ¼ì²éÏµÍ³¿É¶ÁĞ´ĞÔ²¢Ö´ĞĞ´¦Àí
+		-- Check system read-write status and execute logic
 		local function check_system_rw()
-			print(colors.yellow .."ÕıÔÚ¼ì²âÉè±¸ÏµÍ³ÊÇ·ñÎªÖ»¶Á...".. colors.reset)
+			print(colors.yellow .."Detecting if device system is read-only...".. colors.reset)
 			if is_system_readonly() then
-				print(colors.green .. colors.bright .."¼ì²â½á¹û£ºÏµÍ³ÎªÖ»¶Á¡£".. colors.reset)
+				print(colors.green .. colors.bright .."Result: System is read-only.".. colors.reset)
 				print()
 				handle_readonly()
 			else
-				print(colors.green .. colors.bright .."¼ì²â½á¹û£ºÏµÍ³¿É¶ÁĞ´¡£".. colors.reset)
+				print(colors.green .. colors.bright .."Result: System is read-write.".. colors.reset)
 				print()
 				handle_rw()
 			end
 		end
-
-		-- Ö÷Âß¼­Ö´ĞĞ
+		-- Main execution logic
 		local function main()
 			local state = get_adb_state()
-
 			if not state then
-				print(colors.red .."Î´¼ì²âµ½ÈÎºÎÉè±¸£¬ÇëÏÈ¿ªÆô ADB »òÁ¬½ÓÉè±¸¡£".. colors.reset)
+				print(colors.red .."No device detected. Please enable ADB or connect a device.".. colors.reset)
 				run("pause")
 				return
 			end
-
 			if state == "device" then
-				print(colors.green .. colors.bright .."Éè±¸ÒÑÁ¬½Ó¡£".. colors.reset)
+				print(colors.green .. colors.bright .."Device connected.".. colors.reset)
 				print()
 				check_system_rw()
 				run("pause")
 				return
 			end
-
 			if state == "offline" then
-				print(colors.yellow .."¼ì²âµ½Éè±¸×´Ì¬Îª offline¡£".. colors.reset)
-				io.write(colors.cyan .. colors.bright .."ÊÇ·ñ»½ĞÑÉè±¸µÄ ADB£¿(y/n): ".. colors.reset)
+				print(colors.yellow .."Device state detected as offline.".. colors.reset)
+				io.write(colors.cyan .. colors.bright .."Wake up device ADB? (y/n): ".. colors.reset)
 				local choice = io.read()
 				if choice:lower() == "y" then
 					wake_adb()
 					local new_state = get_adb_state()
 					if new_state == "device" then
-						print(colors.green .. colors.bright .."Éè±¸ÒÑ³É¹¦ÉÏÏß£¬ADB Õı³£¡£".. colors.reset)
+						print(colors.green .. colors.bright .."Device online successfully. ADB is ready.".. colors.reset)
 						check_system_rw()
 					else
-						print(colors.red .."Éè±¸ÈÔÎª offline£¬¿ÉÄÜĞèÒªÊÖ¶¯¼ì²é»òÖØÆôÉè±¸¡£".. colors.reset)
+						print(colors.red .."Device remains offline. Manual check or reboot may be needed.".. colors.reset)
 					end
 				else
-					print(colors.yellow .."´ËÉè±¸Î´½øĞĞÈÎºÎĞŞ¸Ä¡£".. colors.reset)
+					print(colors.yellow .."No modifications made to this device.".. colors.reset)
 				end
 				run("pause")
 				return
 			end
-
-			print(colors.yellow .."Î´ÖªÉè±¸×´Ì¬: " .. state .. colors.reset)
+			print(colors.yellow .."Unknown device state: " .. state .. colors.reset)
 			run("pause")
 		end
-
 		main()
 	elseif selection == "4" then
 	is_adb_device_connected()
-	        print(colors.blue .. colors.bright .."¹ÒÔØ¶ÁĞ´..." .. colors.reset)
+	        print(colors.blue .. colors.bright .."Mounting as read-write..." .. colors.reset)
             os.execute("bin\\adb shell mount -o remount,rw /")
-            -- ³¢ÊÔÔÚ /sbin/ ÖĞ´´½¨ test ÎÄ¼ş
+            -- Try creating test file in /sbin/
 		    print()
-	     	print(colors.blue .. colors.bright .."¼ì²éÎÄ¼şÏµÍ³..." .. colors.reset)
-            local createFileCmd = "bin\\adb shell touch /sbin/test 2>&1" -- ²¶»ñ´íÎóÊä³ö
+	     	print(colors.blue .. colors.bright .."Checking filesystem..." .. colors.reset)
+            local createFileCmd = "bin\\adb shell touch /sbin/test 2>&1" -- Capture error output
             local handle = io.popen(createFileCmd)
             local result = handle:read("*a")
             handle:close()
-
-            -- ¼ì²éÊä³öÖĞÊÇ·ñ°üº¬"Read-only"
+            -- Check if output contains "Read-only"
             if result:find("Read") then
-		       print(colors.red .. "ÄúµÄÉè±¸ÏµÍ³Ö»¶Á,Çë³¢ÊÔ±à³ÌÆ÷" .. colors.reset)
+		       print(colors.red .. "Your device system is read-only. Please try using a programmer." .. colors.reset)
 			   print()
 			   os.execute("pause")
             else
-            -- ĞŞ¸ÄÉè±¸
-			print("\n\n")
-			print(colors.red .. colors.bright .."Ê¹ÓÃĞëÖª:")
+            -- Modify device
+			print("
+")
+			print(colors.red .. colors.bright .."Usage Notes:")
 			print()
-			print("Ä¿Ç°¸Ã°æ±¾Èí¼ş½öÊÊÓÃÓÚ¸ñĞĞGX009×Ô´øÏß¿ì³ä³äµç±¦".. colors.reset .. "SNÎªXFWP25¿ªÍ·µÄÉè±¸")
+			print("This version currently only supports Gehang GX009 power banks with built-in cables and fast charging,".. colors.reset .. " with SN starting with XFWP25")
 			print()
-			print(colors.red .. colors.bright .."¶ÔÓÚÉÌÒµÅúÁ¿¸Ä×°½µ¼¶±¾¹¤¾ßÊÇ½ûÖ¹Ê¹ÓÃµÄ£¬ÈçÄúÊ¹ÓÃ±¾¹¤¾ßÀ´½øĞĞÉÌÒµÅúÁ¿Éè±¸ĞŞ¸ÄÎÒÃÇ²»»á¶ÔÄúµÄ²Ù×÷×öÈÎºÎµ£±£¡£")
+			print(colors.red .. colors.bright .."Commercial bulk modification using this tool is prohibited. We provide no warranty for such usage.".. colors.reset)
 			print()
-			print("¶ÔÓÚ¸ñĞĞ¹Ù·½ËùËµµÄ½ûÖ¹ĞŞ¸ÄÉè±¸£¬ÎÒÃÇÉíÎªÒÑ¹ºÂòÉè±¸µÄÖ÷ÈËÓĞÈ¨¸ü¸ÄÎÒÃÇËùÓĞµÄÉè±¸(ÔÚ¸ü¸ÄÉè±¸ºóÎÒÃÇ".. colors.reset .. "×ÔÔ¸·ÅÆúËùÓĞ±£ĞŞ".. colors.red .. colors.bright ..")±¾¹¤¾ß¸ü¸ÄÈ«³ÌÃâ·Ñ£¬ÎŞĞè¸¶·Ñ£¬²»´æÔÚÓ¯ÀûĞĞÎª¡£".. colors.reset)
-			print("\n\n")
-			io.write(colors.green .. "ÇëÊäÈëÉè±¸¸Ç×ÓÉÏµÄSN²¢°´ Enter ¼ü: ".. colors.red .. colors.bright)
+			print("Although Gehang states device modification is forbidden, as owners of purchased devices, we have the right to modify our property.".. colors.reset .. " By doing so, we ".. colors.red .. colors.bright .."voluntarily waive all warranty rights. This tool is completely free and non-commercial.".. colors.reset)
+			print("
+")
+			io.write(colors.green .. "Enter the SN printed on the device cover and press Enter: ".. colors.red .. colors.bright)
 			io.read()
-			print(colors.green .. colors.bright .."ÒÑ¹ÒÔØ¸ùÄ¿Â¼Îª¿É¶ÁĞ´£¬ÕıÔÚÍ£Ö¹³§¼Ò·şÎñ...".. colors.reset)
+			print(colors.green .. colors.bright .."Root mounted as read-write. Stopping manufacturer services...".. colors.reset)
 			os.execute("bin\\adb shell killall iccid_check")
 			os.execute("bin\\adb shell killall goahead")
 			os.execute("bin\\adb shell killall zte_mifi &")
 			print()
-			print(colors.green .. colors.bright .."ÒÑ¹Ø±Õ¶à¸ö½ø³Ì".. colors.reset)
+			print(colors.green .. colors.bright .."Multiple processes stopped".. colors.reset)
 			print()
-	        print(colors.blue .."ÕıÔÚ¸ü¸ÄÏµÍ³°æ±¾".. colors.reset)
+	        print(colors.blue .."Changing system version...".. colors.reset)
 			os.execute([[bin\\adb shell "echo 'nv set cr_version=ALK-Punguin_P012-20250814 &' >> /etc/rc"]])
 			print()
-			print(colors.yellow .."ÕıÔÚĞŞ¸ÄÉè±¸ÎÄ¼ş".. colors.reset)
+			print(colors.yellow .."Modifying device files...".. colors.reset)
 			os.execute("bin\\adb shell rm -rf /sbin/zte_mifi")
 			os.execute("bin\\adb shell rm -rf /bin/iccid_check")
 			os.execute("bin\\adb shell rm -rf /bin/goahead")
@@ -666,11 +643,11 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 			os.execute("bin\\adb shell rm -rf -r /etc_ro/mmi")
 			os.execute("bin\\adb shell rm -r -rf /sbin/tc_tbf.sh")
             os.execute("bin\\adb shell rm -rf /sbin/start_update_app.sh")
-			print(colors.red .."Éè±¸ÄÚºËÒÑ±»É¾³ı£¬Çë²»Òª¹Ø»úÉè±¸".. colors.reset)
-			print(colors.red .."Éè±¸ÄÚºËÒÑ±»É¾³ı£¬Çë²»Òª¹Ø»úÉè±¸".. colors.reset)
-			print(colors.red .."Éè±¸ÄÚºËÒÑ±»É¾³ı£¬Çë²»Òª¹Ø»úÉè±¸".. colors.reset)
+			print(colors.red .."Device kernel has been removed. DO NOT power off the device.".. colors.reset)
+			print(colors.red .."Device kernel has been removed. DO NOT power off the device.".. colors.reset)
+			print(colors.red .."Device kernel has been removed. DO NOT power off the device.".. colors.reset)
 			print()
-			print(colors.green .."ÕıÔÚ°²×°ĞÂÄÚºËÎÄ¼şÓë²¹¶¡...".. colors.reset)
+			print(colors.green .."Installing new kernel files and patches...".. colors.reset)
 			os.execute("bin\\adb push file\\gx009\\zte_mifi /sbin/zte_mifi")
 			os.execute("bin\\adb push file\\gx009\\goahead /bin/goahead")
 			os.execute("bin\\adb push file\\gx009\\web.zip /tmp/web.zip")
@@ -678,62 +655,64 @@ local function set_adb()   -- ÉèÖÃÉè±¸adb(3.21°æ±¾´úÂë,4.0ÕûºÏ)
 			os.execute("bin\\adb push file\\gsmtty /bin/gsmtty")
 			os.execute("bin\\adb push file\\at_web\\at_server /bin/at_server")
 			os.execute("bin\\adb push file\\tc_tbf.sh /sbin/tc_tbf.sh")
-			print("\n")
-			print(colors.yellow .."ÎÄ¼şÒÑ´«ÊäÍê³É£¬¼´½«½øĞĞ½âÑ¹²Ù×÷".. colors.reset)
+			print("
+")
+			print(colors.yellow .."File transfer complete. Proceeding with extraction...".. colors.reset)
 			os.execute('bin\\adb shell "unzip /tmp/web.zip -d /etc_ro/"')
 			os.execute('bin\\adb shell "unzip /tmp/mmi.zip -d /etc_ro/"')
-			print("\n")
-			print(colors.blue .."ÕıÔÚÉèÖÃÎÄ¼şÈ¨ÏŞ...".. colors.reset)
+			print("
+")
+			print(colors.blue .."Setting file permissions...".. colors.reset)
 			os.execute('bin\\adb shell "chmod +x /sbin/zte_mifi"')
 			os.execute('bin\\adb shell "chmod +x /bin/goahead"')
 			os.execute('bin\\adb shell "chmod +x /etc_ro/web/*"')
 			os.execute('bin\\adb shell "chmod +x /etc_ro/mmi/*"')
 			os.execute('bin\\adb shell "chmod +x /bin/at_server"')
 			os.execute('bin\\adb shell "chmod +x /bin/gsmtty"')
-			print(colors.yellow .."ÉèÖÃ¶îÍâÔËĞĞÊ±ºó¶Ë...".. colors.reset)
+			print(colors.yellow .."Setting additional runtime backends...".. colors.reset)
 			os.execute([[bin\\adb shell "echo 'at_server &' >> /etc/rc"]])
 			print()
-			print(colors.green .."ÇĞ»»ÍâÖÃ¿¨²Û...".. colors.reset)
+			print(colors.green .."Switching to external SIM slot...".. colors.reset)
 			os.execute("bin\\adb shell gsmtty AT+ZCARDSWITCH=0")
 			print()
-			print(colors.yellow .."ÇåÀíÁÙÊ±ÎÄ¼ş...".. colors.reset)
+			print(colors.yellow .."Cleaning temporary files...".. colors.reset)
 			os.execute("bin\\adb shell rm -r -rf /bin/gsmtty")
 			os.execute("bin\\adb shell reboot")
 			print()
-			print(colors.green .. colors.bright .."Íê³É,ÇëµÈ´ıÉè±¸¿ª»ú".. colors.reset)
+			print(colors.green .. colors.bright .."Done. Please wait for device to boot up.".. colors.reset)
 	        print()
 	        print()
 	        print()
 	        print()
-	        os.execute("pause")  -- µÈ´ıÓÃ»§°´ÈÎÒâ¼ü¼ÌĞø
+	        os.execute("pause")  -- Wait for user keypress
 	end
   end
 end
-
--- ´òÓ¡Ñ¡Ïî
+-- Print options
 local function uisoc()
-    print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-    print("\n")
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+    print("
+")
 	print()
-    print(colors.yellow .. "       1.²éÑ¯¾Û»ğSN" .. colors.reset) 
+    print(colors.yellow .. "       1. Query JuHuo SN" .. colors.reset) 
 	print()
-    print(colors.blue .. "          2.ĞŞ¸ÄÉè±¸²ÎÊı" .. colors.reset) 
+    print(colors.blue .. "          2. Modify Device Parameters" .. colors.reset) 
 	print()
-    print(colors.cyan .. "             3.ResearchDownload" .. colors.reset) 
+    print(colors.cyan .. "             3. ResearchDownload" .. colors.reset) 
 	print()
-    print(colors.green .. "                4.spd_dump" .. colors.reset) 
+    print(colors.green .. "                4. spd_dump" .. colors.reset) 
 	print()
-    print(colors.white .. "                   5.ÇĞ¿¨" .. colors.reset) 
+    print(colors.white .. "                   5. SIM Switch" .. colors.reset) 
 	print()
-	print("°´ÏÂ»Ø³µ·µ»Ø")
-	print()
-	print()
+	print("Press Enter to return")
 	print()
 	print()
-	io.write(colors.green .. "ÇëÊäÈë²¢°´Enter¼ü: " .. colors.reset)
+	print()
+	print()
+	io.write(colors.green .. "Enter and press Enter: " .. colors.reset)
         local choice111 = io.read()
         if choice111 == "1" then
-            os.execute("explorer file\\tool\\SN²éÑ¯")
+            os.execute("explorer file\\tool\\SN Query")
         elseif choice111 == "2" then
 		    os.execute("explorer file\\tool\\Pandora_R22.20.1701")
         elseif choice111 == "3" then
@@ -742,206 +721,201 @@ local function uisoc()
 		    os.execute("explorer file\\tool\\spd_dump")
         elseif choice111 == "5" then
 		    print()
-            print(colors.red .. colors.bright .. "¾¯¸æ!ÇëÏÈÁ¬½ÓÉè±¸WIFI»òÍøÂç,·ñÔò³ÌĞò¿¨ËÀ[»¬»üĞ¦]" .. colors.reset)
+            print(colors.red .. colors.bright .. "Warning! Please connect to the device's Wi-Fi or network first, otherwise the program will hang [smiley]" .. colors.reset)
             print()
             print()
-		    io.write(colors.green .. "Éè±¸WEBµØÖ·(ÀıÈç 192.168.100.1): "  .. colors.red .. colors.bright)
+		    io.write(colors.green .. "Device WEB address (e.g., 192.168.100.1): "  .. colors.red .. colors.bright)
              local ipAddress = io.read()
 			 os.execute('start "" "http://'..ipAddress..'//postesim?postesim=%7B%22esim%22:0%7D"')
 		else
             os.execute("bin\\lua54 lua\\helper.lua")
         end
 end
-
- local function mifi_Studio() --ÀûÓÃMifiStudioÀ´ÌáÈ¡Éè±¸ÎÄ¼ş
-    print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+ local function mifi_Studio() -- Use MifiStudio to extract device files
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 	print()
 	print()
-	print(colors.green .. colors.bright .."Ê¹ÓÃĞ¡ÌùÊ¿:".. colors.reset .. colors.green .. " 1.±¾¹¤¾ßÊÇÖ±½ÓÔËĞĞMIFIÖ®¼ÒµÄZXIC-RomKit½øĞĞÌáÈ¡,¸Ã¹¤¾ßÔÚÖúÊÖ3.0Ê±¾ÍÒÑ¾­ÓĞÁË")
+	print(colors.green .. colors.bright .."Tips:".. colors.reset .. colors.green .. " 1. This tool directly runs MIFI Home's ZXIC-RomKit for extractionâ€”a feature included since Helper v3.0")
 	print()
 	print()
 	print()
 	print()
-	print(colors.red .. 'ÌáÈ¡Íê³Éºó,ÄúÌáÈ¡µÄÄÚÈİ»áÔÚZXIC-RomKit¸ùÄ¿Â¼ÒÔ"Z."¿ªÍ·µÄÎÄ¼ş¼ĞÄÚ'.. colors.reset)
+	print(colors.red .. 'After extraction, your files will be in the ZXIC-RomKit root directory in a folder starting with "Z."'.. colors.reset)
 	print()
-	print(colors.bright .."ÇëÑ¡ÔñÒª½øĞĞµÄ²Ù×÷£º")
+	print(colors.bright .."Please select an action:")
     print()
-    print(colors.cyan .. colors.bright .. "                      1.´ò¿ª¹¤¾ß           2.´ò¿ªÌáÈ¡Ä¿Â¼          3.·µ»Ø" .. colors.reset)
+    print(colors.cyan .. colors.bright .. "                      1. Open Tool           2. Open Extraction Directory          3. Return" .. colors.reset)
 	print()
-	io.write(colors.green .. "ÇëÊäÈëÊı×Ö²¢°´ Enter ¼ü: " .. colors.reset)
+	io.write(colors.green .. "Enter a number and press Enter: " .. colors.reset)
     local user_Studio_selection = io.read()
         if user_Studio_selection == "1" then
-        os.execute("start conhost.exe file\\ZXIC-RomKit\\_ADBÒ»¼üÌáÈ¡¹Ì¼ş.bat")
+        os.execute("start conhost.exe file\\ZXIC-RomKit\\_ADBä¸€é”®æå–å›ºä»¶.bat")
         elseif user_Studio_selection == "2" then
 		os.execute("explorer file\\ZXIC-RomKit")
         end
  end
-
-local function AD()  --ÎªÁËÎ¬³ÖÉú¼ÆËù½ÓµÄÒ»¸öĞ¡¹ã¸æ¡£
+local function AD()  -- A small ad for livelihood.
 os.execute('start "" "https://shimo.im/docs/RKAWMBJLgXu96aq8/"')
 end
-
- local function set_wifi()  -- ÉèÖÃzxicÖĞÎÄWIFI,4.1°æ±¾¹¦ÄÜ,24.11.14
-    print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+ local function set_wifi()  -- Set ZTE ZXIC Chinese Wi-Fi, v4.1 feature, 2024-11-14
+    print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
     print()
-	print(colors.red .. "Ê¹ÓÃĞëÖª:".. colors.blue .. colors.bright .."Ä¿Ç°°æ±¾Ôİ²»Ö§³Ö¸øÄúµÄÂ·ÓÉÆ÷ÉèÖÃWiFiÃÜÂë,Ö»Ö§³ÖĞŞ¸ÄÄúµÄWiFiÃû³Æ,Ö§³ÖÖĞÎÄ")
+	print(colors.red .. "Usage Notes:".. colors.blue .. colors.bright .." Current version does not support setting Wi-Fi password on your routerâ€”only SSID modification is supported, including Chinese characters.")
     print()
-	print("         " .. "Ö§³ÖĞ¡²¿·Ö±íÇé·ûºÅÓë´ó²¿·ÖÖĞÎÄ×Ö·û¡£Èç¹ûÓöµ½WiFiÏûÊ§¡¢WiFiÎŞ·¨Á¬½ÓµÈÎÊÌâ,Çë³¤°´»Ö¸´³ö³§°´Å¥¡£")
+	print("         " .. "Supports some emojis and most Chinese characters. If Wi-Fi disappears or becomes unconnectable, long-press the factory reset button.")
 	print()
-	print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
-	io.write(colors.green .. "Éè±¸WEBµØÖ·(ÀıÈç 192.168.100.1): "  .. colors.red .. colors.bright)
+	print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
+	io.write(colors.green .. "Device WEB address (e.g., 192.168.100.1): "  .. colors.red .. colors.bright)
     local YOUR_IP = io.read()
     print()
-    print(colors.blue .. colors.bright .."ÇëÏÈÔÚµçÄÔÉÏµÇÂ¼Éè±¸ºóÌ¨: http://".. YOUR_IP .."/".. colors.reset)
+    print(colors.blue .. colors.bright .."Please log into the device admin page on your PC first: http://".. YOUR_IP .."/".. colors.reset)
     print()
-    io.write(colors.green .."ÇëÊäÈëÄãµÄ SSID: ".. colors.red .. colors.bright)
+    io.write(colors.green .."Enter your SSID: ".. colors.red .. colors.bright)
     local YOUR_SSID = io.read()
     print(colors.reset)
-    io.write(colors.green .."×î´ó½ÓÈëÉè±¸Êı: ".. colors.red .. colors.bright)
+    io.write(colors.green .."Max connected devices: ".. colors.red .. colors.bright)
     local MAX_Access = io.read()
     print(colors.reset)
     -- Prepare the POST data
     local DATA = "goformId=SET_WIFI_SSID1_SETTINGS&ssid=" .. YOUR_SSID ..
                 "&broadcastSsidEnabled=0&MAX_Access_num=" .. MAX_Access ..
                 "&security_mode=OPEN&cipher=2&NoForwarding=0&show_qrcode_flag=0&security_shared_mode=NONE"
-
     local TYPES = {
         'goform/goform_set_cmd_process',
         'reqproc/proc_post'
     }
-
     -- Function to perform the POST request
     local function requ(type)
         local command = "bin\\curl -s -X POST -d \"" .. DATA .. "\" \"http://" .. YOUR_IP .. "/" .. type .. "\" 1>nul 2>nul"
         os.execute(command)
     end
-
     -- Loop through the request types and execute
     for _, TYPE in ipairs(TYPES) do
         requ(TYPE)
     end
-
     -- Output result
-    print(colors.green .."Èç¹û´ËÊ±WiFi¶Ï¿ª´ú±íÉèÖÃ³É¹¦")
-    print("·ñÔòÊ§°Ü")
+    print(colors.green .."If Wi-Fi disconnects now, the setting succeeded.")
+    print("Otherwise, it failed.")
     io.read(1)
 end
-
 local function xr_web()
 	is_adb_device_connected()
-	print(colors.cyan .. colors.bright .. "¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T" .. colors.reset)
+	print(colors.cyan .. colors.bright .. "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" .. colors.reset)
 	print()
-	print(colors.cyan .. colors.bright .. "Ê¹ÓÃĞ¡ÌùÊ¿:" .. colors.reset .. colors.green .. "Ê¹ÓÃ±¾³ÌĞòµÄÉè±¸±ØĞëÊÇjffs2µÈÏµÍ³£¬Ä¿Ç°²»Ö§³ÖsquashfsÖ»¶ÁÑ¹ËõÎÄ¼şÏµÍ³¡£")
+	print(colors.cyan .. colors.bright .. "Tips:" .. colors.reset .. colors.green .. " Devices using this program must run jffs2 or similar systems. squashfs read-only compressed filesystems are not supported.")
 	print()
-	print(colors.cyan .. colors.bright .. " =------" .. colors.magenta .. colors.bright .. "Ñ¡ÔñĞ´ÈëÄ£Ê½" .. colors.cyan .. colors.bright .. "--------------------------------------------------------------------------------------------=")
+	print(colors.cyan .. colors.bright .. " =------" .. colors.magenta .. colors.bright .. "Select Write Mode" .. colors.cyan .. colors.bright .. "--------------------------------------------------------------------------------------------=")
 	print(colors.cyan .. colors.bright .. " =                                                                                                              =")
-	print(colors.cyan .. colors.bright .. " =" .. colors.reset .. colors.yellow .. "     1.×Ô¶¨ÒåÎÄ¼ş        2.Í¨ÓÃATweb¸ß¼¶web                                                                   " .. colors.cyan .. colors.bright .. "=")
+	print(colors.cyan .. colors.bright .. " =" .. colors.reset .. colors.yellow .. "     1. Custom File        2. Universal ATweb Advanced Web                                                                   " .. colors.cyan .. colors.bright .. "=")
 	print(colors.cyan .. colors.bright .. " =                                                                                                              =")
 	print(colors.cyan .. colors.bright .. " =    " .. colors.reset .. colors.yellow .. "                                                                                                          " .. colors.cyan .. colors.bright .. "=")
 	print(colors.cyan .. colors.bright .. " =--------------------------------------------------------------------------------------------------------------=")
 	print()
-  -- ÈÃÓÃ»§Ñ¡ÔñÏàÓ¦µÄ²Ù×÷²¢±£´æÁÙÊ±±äÁ¿
-	io.write(colors.green .. "ÇëÊäÈëÊı×Ö²¢°´ Enter ¼ü: " .. colors.red .. colors.bright)
+  -- Let user select operation and store in temporary variable
+	io.write(colors.green .. "Enter a number and press Enter: " .. colors.red .. colors.bright)
 	local web_selection = io.read()
-           -- É¸Ñ¡±äÁ¿Êı¾İ²¢Ö´ĞĞ¶ÔÓ¦²Ù×÷
+           -- Filter input and execute corresponding action
 	print(colors.reset)
 	if web_selection == "1" then
 		os.execute("start conhost.exe bin\\lua54 lua\\app_zfile-web.lua")
 	elseif web_selection == "2" then
 		print()
-		print(colors.blue .. colors.bright .. "¹ÒÔØ¶ÁĞ´..." .. colors.reset)
+		print(colors.blue .. colors.bright .. "Mounting as read-write..." .. colors.reset)
 		os.execute("bin\\adb shell mount -o remount,rw /")
 		print()
-		print(colors.yellow .. colors.bright .. "´«ÊäÎÄ¼ş(¿¨×¡¾ÍÊÇ²»Ö§³Ö)..." .. colors.reset)
+		print(colors.yellow .. colors.bright .. "Transferring files (hang means unsupported)..." .. colors.reset)
 		--os.execute("bin\\adb push file\\at_web\\at_server /bin/at_server")
 		--os.execute("bin\\adb shell chmod +x ./bin/at_server")
 		--os.execute("bin\\adb push file\\at_web\\at_info.html /etc_ro/web/at_info.html")
 		--os.execute("bin\\adb push file\\at_web\\css\\at.css /etc_ro/web/css/at.css")
 		--os.execute("bin\\adb push file\\at_web\\js\\at.js /etc_ro/web/js/at.js")
 		print()
-		print(colors.magenta .. colors.bright .. "ÉèÖÃ×ÔÆô¶¯..." .. colors.reset)
+		print(colors.magenta .. colors.bright .. "Setting auto-start..." .. colors.reset)
 		--os.execute([[bin\\adb shell "echo 'at_server &' >> /sbin/rm_dev.sh"]])
 		--os.execute("start /min bin\\adb shell at_server &")
-		print("\n")
-		print("\n")
-		print(colors.green .. "ÉèÖÃ³É¹¦À²£¡£¡")
-				-- »ñÈ¡Éè±¸Íø¹Ø IP
+		print("
+")
+		print("
+")
+		print(colors.green .. "Setup successful!!")
+				-- Get device gateway IP
 		local handle = io.popen("bin\\adb shell nv get lan_ipaddr")
 		local ip = handle:read("*l")
 		handle:close()
 		if ip and ip:match("%d+%.%d+%.%d+%.%d+") then
 			print()
-			print(colors.cyan .. "¼ì²âµ½Éè±¸IP: " .. colors.yellow .. ip .. colors.reset)
-			io.write(colors.cyan .. "ÊÇ·ñÒªÔÚä¯ÀÀÆ÷ÖĞ´ò¿ª ATweb? (y/n): ")
+			print(colors.cyan .. "Detected device IP: " .. colors.yellow .. ip .. colors.reset)
+			io.write(colors.cyan .. "Open ATweb in browser? (y/n): ")
 			local choice = io.read()
 			if choice == "y" or choice == "Y" then
 				os.execute("start http://" .. ip .. ":9090/at_info.html")
 			else
-				print("\n")
-				print(colors.green .."Äã¿ÉÒÔÊÖ¶¯ÔÚä¯ÀÀÆ÷ÖĞ·ÃÎÊ: http://" .. ip .. "µÄ9090¶Ë¿Ú²¢ÇëÇóat_info.htmlÒ³Ãæ¡£")
+				print("
+")
+				print(colors.green .."You can manually visit: http://" .. ip .. " on port 9090 and request at_info.html.")
 			end
 		else
-		    print("ÇëÊÖ¶¯·ÃÎÊÄãÉè±¸ipµØÖ·µÄ9090¶Ë¿Ú²¢ÇëÇóat_info.htmlÒ³Ãæ¡£")
+		    print("Please manually visit your device's IP on port 9090 and request at_info.html.")
 		end
-		print("\n\n")
+		print("
+")
 		print(colors.reset)
 		os.execute("pause")
 	end
 end
-
--- ´òÓ¡±êÌâ
+-- Print title
 local function print_title1()
-    os.execute("cls")  -- ÇåÆÁ
-	print("(C) 2025-2026 Æó¶ì¾ıpunguin. All rights reserverd.".. colors.cyan .. colors.bright .. "                XZ.Ğ¶ÔØ        RE.Ë¢ĞÂÖúÊÖ      EXIT.ÍË³öÖúÊÖ\n".. colors.reset)
-
+    os.execute("cls")  -- Clear screen
+	print("(C) 2025-2026 Penguin. All rights reserved.".. colors.cyan .. colors.bright .. "                XZ. Uninstall        RE. Refresh Helper      EXIT. Exit Helper
+".. colors.reset)
 end
-
--- ´òÓ¡¹«¸æ
+-- Print announcement
 local function print_announcement()
     print()
-    print(colors.blue .. colors.bright .. "ÖúÊÖ¹«¸æ:".. colors.red .."±¾ÖúÊÖÔÚ4GÈ¦×ÓÒÑ¾­ÍêÃÀ£¬¼´½«ÃæÁÙÍ£¸ü£¡\n" .. colors.reset)
-    check_adb_status()  -- ADB×´Ì¬¼ì²â
-    check_serial() -- ´®¿Ú×´Ì¬¼ì²â
-	print(colors.green .. "\n" .. "Tips:ÖúÊÖ¹Ù·½QQÈºÁÄÒÑÉı¼¶2000ÈË´óÈº,»¶Ó­¼ÓÈë" .. colors.underline_blue .. colors.bright .. "725700912" .. colors.reset)
+    print(colors.blue .. colors.bright .. "Helper Announcement:".. colors.red .."This helper is now complete in the 4G community and will soon be discontinued!
+" .. colors.reset)
+    check_adb_status()  -- ADB status check
+    check_serial() -- Serial port status check
+	print(colors.green .. "
+" .. "Tip: The official helper QQ group has upgraded to a 2000-member group. Welcome to join: " .. colors.underline_blue .. colors.bright .."725700912" .. colors.reset)
 	print()
-	check_version() -- Ìí¼Ó°æ±¾ĞÅÏ¢¼ì²â
-	print(colors.blue .. colors.bright .. "ÈôÔÆ¶ËÓĞĞÂ°æ±¾,ÇëÊäÈë'new'ÏÂÔØ" .. colors.reset)
+	check_version() -- Add version info check
+	print(colors.blue .. colors.bright .. "If a new version is available in the cloud, type 'new' to download" .. colors.reset)
 end
-
--- ´òÓ¡Ñ¡Ïî
+-- Print menu
 local function print_menu()
 	print()
 	print()
-    print(colors.yellow .. "            01.Éè±¸ĞÅÏ¢           02.ÉèÖÃÉè±¸adb       03.Çı¶¯°²×°       04.ADBÖÕ¶Ë      05.Éè±¸¹ÜÀíÆ÷    " .. colors.reset)
-    print(colors.cyan .. colors.bright .. "          =------ ²Ù×÷Éè±¸ÎÄ¼ş-------------------------------------------------------------------------=" .. colors.reset)
+    print(colors.yellow .. "            01. Device Info           02. Set Device ADB       03. Driver Install       04. ADB Terminal      05. Device Manager    " .. colors.reset)
+    print(colors.cyan .. colors.bright .. "          =------ Operate Device Files-------------------------------------------------------------------------=" .. colors.reset)
     print(colors.cyan .. colors.bright .."          =                                                                                            =".. colors.reset)
-    print(colors.cyan .. colors.bright .."          =".. colors.reset .. colors.yellow .."    A.ÌáÈ¡MTD4·ÖÇø    B.µ÷ÓÃdongleË¢ÈëMTD4     C.¿ìËÙMTDË¢Ğ´¹¤¾ß      D.²é¿´»úÆ÷mtdÀàĞÍ     ".. colors.reset .. colors.cyan ..colors.bright .."=" .. colors.reset)
+    print(colors.cyan .. colors.bright .."          =".. colors.reset .. colors.yellow .."    A. Extract MTD4 Partition    B. Flash MTD4 via Dongle     C. Quick MTD Flash Tool      D. View Device MTD Type     ".. colors.reset .. colors.cyan ..colors.bright .."=" .. colors.reset)
     print(colors.cyan .. colors.bright .."          =                                                                                            =".. colors.reset)
-	print(colors.cyan .. colors.bright .."          =".. colors.reset .. colors.yellow .."    E.Ğ´ÈëWEB         F.ÖĞĞËÎ¢Í¨É±ÍêÃÀÈ¥¿Ø     G.¹Ì¼şÌáÈ¡Óë½â´ò°ü                           ".. colors.reset .. colors.cyan ..colors.bright .."=" .. colors.reset)
+	print(colors.cyan .. colors.bright .."          =".. colors.reset .. colors.yellow .."    E. Write WEB         F. Universal ZTE ZXIC Remote Control Removal     G. Firmware Extraction & Unpacking                           ".. colors.reset .. colors.cyan ..colors.bright .."=" .. colors.reset)
 	print(colors.cyan .. colors.bright .."          =                                                                                            =".. colors.reset)
     print(colors.cyan .. colors.bright .. "          =--------------------------------------------------------------------------------------------=" .. colors.reset)
-	print("\n")
-	print(colors.cyan .. colors.bright .. "     ¹¤¾ßÓëµ¼º½À¸:" .. colors.reset)
+	print("
+")
+	print(colors.cyan .. colors.bright .. "     Tools & Navigation:" .. colors.reset)
     print()
-	print(colors.yellow .. "         1.´®¿Ú¹¤¾ß         2.ÔÆĞ¡·«ÖúÊÖ      3.1869¹¤¾ß      4.Î÷¹ÏÎ¶asr¹¤¾ß(×îÖÕ)   5.Orz0000¹¤¾ß(¼¦µ°½ã)" .. colors.reset)
+	print(colors.yellow .. "         1. Serial Port Tool         2. YunXiaoFan Helper      3. 1869 Tool      4. Watermelon ASR Tool (Final)   5. Orz0000 Tool (Egg Sister)" .. colors.reset)
 	print()
-	print(colors.yellow .. "         6.zxicÉèÖÃWIFI     7.Á÷Á¿Ê§×ÙÆ÷      ".. colors.underline_magenta .. "8.×Ï¹â×¨ÇøÈë¿Ú" .. colors.reset .."  ".. colors.underline_green .. colors.bright .."9.ÒªÁ÷Á¿¿¨Âğ£¿" .. colors.reset)
+	print(colors.yellow .. "         6. ZTE ZXIC Set Wi-Fi     7. Data Disappearing Tool      ".. colors.underline_magenta .. "8. UNISOC Zone" .. colors.reset .."  ".. colors.underline_green .. colors.bright .."9. Need a Data SIM?" .. colors.reset)
 	print()
 	print()
 end
-
--- ÓÃ»§ÊäÈë¶ÔÓ¦µÄÑ¡Ïî
+-- User input handling loop
     while true do
-    print_title1()            --±êÌâ
-    print_announcement()      --¹«¸æ
-    print_menu()              --²Ëµ¥
-    io.write(colors.green .. "ÇëÊäÈë²¢°´Enter¼ü: " .. colors.reset) --ÌáÊ¾ÓÃ»§ÊäÈë
-    local choice = io.read() --²¶»ñÓÃ»§ÊäÈë
+    print_title1()            -- Title
+    print_announcement()      -- Announcement
+    print_menu()              -- Menu
+    io.write(colors.green .. "Enter and press Enter: " .. colors.reset) -- Prompt user
+    local choice = io.read() -- Capture input
     if choice == "A" then
-        os.execute("start conhost.exe bin\\lua54 lua\\app_zmtd-extract.lua") --ÌáÈ¡·ÖÇøµÄ½Å±¾
+        os.execute("start conhost.exe bin\\lua54 lua\\app_zmtd-extract.lua") -- Partition extraction script
     elseif choice == "B" then
 		os.execute("cls")
-		os.execute("start conhost.exe file\\dongle_fun\\dongle_fun.bat") --µ÷ÓÃdongle_funµÄBat
+		os.execute("start conhost.exe file\\dongle_fun\\dongle_fun.bat") -- Call dongle_fun batch
     elseif choice == "C" then
         os.execute("start conhost.exe bin\\lua54 lua\\app_zmtd-brusque.lua")
     elseif choice == "D" then
@@ -993,10 +967,10 @@ end
         os.execute("start unins000.exe")
 		break
     elseif choice == "EXIT" then
-        print(colors.red .. "ÍË³ö¹¤¾ßÏä" .. colors.reset)
+        print(colors.red .. "Exiting toolbox" .. colors.reset)
         break
     else
-        print(colors.red .. "ÎŞĞ§µÄÑ¡Ïî£¬ÇëÖØÊÔ¡£" .. colors.reset)
+        print(colors.red .. "Invalid option. Please try again." .. colors.reset)
 		os.execute("pause")
     end
 end
