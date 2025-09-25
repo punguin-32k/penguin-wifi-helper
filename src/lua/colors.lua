@@ -1,17 +1,26 @@
 -- colors.lua
--- ANSI 颜色码库，支持多种颜色及样式
--- 
--- 版权 (C) 2025-2026 企鹅君Punguin
+-- ANSI color code library, supporting multiple colors and styles
 --
--- 本程序是自由软件：你可以根据自由软件基金会发布的GNU Affero通用公共许可证的条款，即许可证的第3版或（您选择的）任何后来的版本重新发布它和/或修改它。。
--- 本程序的发布是希望它能起到作用。但没有任何保证；甚至没有隐含的保证。本程序的分发是希望它是有用的，但没有任何保证，甚至没有隐含的适销对路或适合某一特定目的的保证。 参见 GNU Affero通用公共许可证了解更多细节。
--- 您应该已经收到了一份GNU Affero通用公共许可证的副本。 如果没有，请参见<https://www.gnu.org/licenses/>。
+-- Copyright (C) 2025-2026 Punguin
 --
--- 联系我们：3618679658@qq.com
--- ChatGPT协助制作编写
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU Affero General Public License as
+-- published by the Free Software Foundation, either version 3 of the
+-- License, or (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+-- GNU Affero General Public License for more details.
+--
+-- You should have received a copy of the GNU Affero General Public License.
+-- If not, see <https://www.gnu.org/licenses/>.
+--
+-- Contact: 3618679658@qq.com
+-- Created with assistance from ChatGPT
 
--- 根据 helper.ini 控制颜色启用与反色模式
--- 支持 #[Enable_Colors] 表示关闭颜色输出
+-- Load color configuration from helper.ini
+-- Supports #[Enable_Colors] to disable color output
 
 local function load_color_config()
     local config = { enable = false, reverse = false }
@@ -22,9 +31,8 @@ local function load_color_config()
     local section_enabled = false
 
     for line in f:lines() do
-        line = line:match("^%s*(.-)%s*$")  -- 去除前后空格
+        line = line:match("^%s*(.-)%s*$")  -- Trim leading/trailing whitespace
 
-        -- 检查是否进入指定段落
         if line:lower() == "[enable_colors]" then
             in_section = true
             section_enabled = true
@@ -38,7 +46,6 @@ local function load_color_config()
             if key and val then
                 key = key:lower():gsub("%s+", "")
                 val = val:match("^%s*(.-)%s*$")
-
                 if key == "reverse-color" then
                     config.enable = true
                     config.reverse = (val == "1")
