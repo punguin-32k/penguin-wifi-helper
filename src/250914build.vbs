@@ -1,3 +1,3 @@
 Set objShell = CreateObject("WScript.Shell")
-objShell.Popup "当前版本是Build版本，不代表最终成品", 10, "提示", 64
-objShell.Popup "1.修复格行降级因为删除Fota_upi循环重启问题" & vbCrLf & ""& vbCrLf & "2.在中兴微通杀完美去控新增设备类型" & vbCrLf & ""& vbCrLf & "3.添加atweb写入，在选项E中", 10, "5.1-build-250914更新内容：", 0
+objShell.Popup "Current version is a Build version and does not represent the final release.", 10, "Notice", 64
+objShell.Popup "1. Fixed Gehang downgrade reboot loop caused by deletion of fota_upi" & vbCrLf & "" & vbCrLf & "2. Added new device type support in ZTE ZXIC universal remote control removal" & vbCrLf & "" & vbCrLf & "3. Added ATweb write functionality (available under Option E)", 10, "5.1-build-250914 Update Notes:", 0
