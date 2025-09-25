@@ -1,176 +1,181 @@
 -- start_helper.lua
--- ÎªÆó¶ìWIFIÖúÊÖÖ÷³ÌĞòÌá¹©³õÊ¼»¯Óë¸üĞÂ¼ì²â·şÎñ
+-- Provides initialization and update detection services for the Penguin WIFI Helper main program
 --
--- °æÈ¨ (C) 2025-2026 Æó¶ì¾ıPunguin
+-- Copyright (C) 2025-2026 Penguin Punguin
 --
--- ±¾³ÌĞòÊÇ×ÔÓÉÈí¼ş£ºÄã¿ÉÒÔ¸ù¾İ×ÔÓÉÈí¼ş»ù½ğ»á·¢²¼µÄGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄÌõ¿î£¬¼´Ğí¿ÉÖ¤µÄµÚ3°æ»ò£¨ÄúÑ¡ÔñµÄ£©ÈÎºÎºóÀ´µÄ°æ±¾ÖØĞÂ·¢²¼ËüºÍ/»òĞŞ¸ÄËü¡£¡£
--- ±¾³ÌĞòµÄ·¢²¼ÊÇÏ£ÍûËüÄÜÆğµ½×÷ÓÃ¡£µ«Ã»ÓĞÈÎºÎ±£Ö¤£»ÉõÖÁÃ»ÓĞÒşº¬µÄ±£Ö¤¡£±¾³ÌĞòµÄ·Ö·¢ÊÇÏ£ÍûËüÊÇÓĞÓÃµÄ£¬µ«Ã»ÓĞÈÎºÎ±£Ö¤£¬ÉõÖÁÃ»ÓĞÒşº¬µÄÊÊÏú¶ÔÂ·»òÊÊºÏÄ³Ò»ÌØ¶¨Ä¿µÄµÄ±£Ö¤¡£ ²Î¼û GNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤ÁË½â¸ü¶àÏ¸½Ú¡£
--- ÄúÓ¦¸ÃÒÑ¾­ÊÕµ½ÁËÒ»·İGNU AfferoÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤µÄ¸±±¾¡£ Èç¹ûÃ»ÓĞ£¬Çë²Î¼û<https://www.gnu.org/licenses/>¡£
+-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+-- You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ÁªÏµÎÒÃÇ£º3618679658@qq.com
--- ChatGPTĞ­ÖúÖÆ×÷±àĞ´
+-- Contact us: 3618679658@qq.com
+-- Assisted by ChatGPT in development and writing
 
--- ÉèÖÃ±êÌâÖÕ¶ËÓë¶¨Òå´°¿Ú´óĞ¡
-os.execute("title Æó¶ìWIFIÖúÊÖ µ±Ç°°æ±¾: 5.2 ,ÕıÔÚ¼ì²â°æ±¾")
+-- Set terminal title and window size
+os.execute("title Penguin WIFI Helper Current Version: 5.2 , Checking for Updates")
 os.execute("mode con: cols=60 lines=15")
 
--- ÒıÈëÍâ²¿¿â
-local path = require("lua\\path") -- ¹¤¾ßÂ·¾¶±äÁ¿¿â
-local colors = require("lua\\colors") -- ANSIÑÕÉ«Âë¿â
-local delay = require("lua\\sleep") -- µ¹¼ÆÊ±²Ù×÷
+-- Import external libraries
+local path = require("lua\\path") -- Utility path variable library
+local colors = require("lua\\colors") -- ANSI color code library
+local delay = require("lua\\sleep") -- Countdown operation
 
--- »ñÈ¡µ±Ç°½Å±¾ËùÔÚÄ¿Â¼
+-- Get the directory of the current script
 local script_path = debug.getinfo(1, "S").source:sub(2)
 local script_dir = script_path:match("(.*/)") or script_path:match("(.+\\)") or "./"
 
--- ¶¨Òå±êÖ¾ÎÄ¼şÂ·¾¶
+-- Define the flag file path
 local flag_file = script_dir .. "dyc"
 
--- ÅĞ¶ÏÊÇ·ñÎªµÚÒ»´ÎÔËĞĞ
+-- Check if this is the first run
 local file = io.open(flag_file, "r")
 if file then
     file:close()
     
-    -- Ê¹ÓÃ¼ÇÊÂ±¾´ò¿ªÅäÖÃÎÄ¼ş
-    print("¼ì²âµ½ÖúÊÖµÚÒ»´ÎÔËĞĞ")
-    print("ÕıÔÚ´ò¿ªÅäÖÃÎÄ¼ş£¬ÇëÊÖ¶¯±à¼­...")
-	delay.sleep(4)
+    -- Open the configuration file with Notepad
+    print("First run detected")
+    print("Opening configuration file. Please edit manually...")
+    delay.sleep(4)
     os.execute('start notepad.exe helper.ini')
-    -- É¾³ı±êÖ¾ÎÄ¼ş£¬±ÜÃâÖØ¸´ÌáÊ¾
+    -- Remove the flag file to avoid repeated prompts
     os.remove(flag_file)
-	delay.sleep(2)
+    delay.sleep(2)
 end
 
 local function print_tips()
-   print(colors.green .."ÕıÔÚ¼ì²âÖúÊÖÔÆ¶Ë°æ±¾,ÇëÄÍĞÄµÈ´ıÊıÃë\n\n" .. colors.reset)
+   print(colors.green .."Checking for the latest cloud version of the helper. Please wait a few seconds...\n\n" .. colors.reset)
 end
 
 local function print_start()
    print()
    print()
-   print(colors.green .."ÕıÔÚ´¦ÀíÆô¶¯²ÎÊıÓëÀ­ÆğÖúÊÖ,ÇëÉÔµÈ¼¸Ãë......\n" .. colors.reset)
+   print(colors.green .."Processing startup parameters and launching the helper. Please wait a few seconds......\n" .. colors.reset)
 end
 
--- µÈ´ıÓÃ»§°´ÏÂÈÎÒâ¼ü
+-- Wait for user to press any key
 local function wait_for_user_input()
     print()
-    print(colors.yellow .. "¼ì²âµ½ĞÂ°æ±¾£¬°´ÏÂÈÎÒâ¼ü¼ÌĞø..." .. colors.reset)
-    os.execute("pause >nul")  -- WindowsÏÂµÈ´ıÓÃ»§°´ÏÂÈÎÒâ¼ü
-	print()
-	delay.sleep(1)
-	print()
-	print(colors.red .. "Ã¿´Î¸üĞÂ¶¼ÓĞĞÂµÄºÃ¹¦ÄÜ,»¹ÊÇ½¨ÒéÄúÉı¼¶µÄÄØ" .. colors.reset)
-	delay.sleep(5)
+    print(colors.yellow .. "New version detected. Press any key to continue..." .. colors.reset)
+    os.execute("pause >nul")  -- Wait for any key press on Windows
+    print()
+    delay.sleep(1)
+    print()
+    print(colors.red .. "Each update includes exciting new featuresâ€”upgrading is highly recommended!" .. colors.reset)
+    delay.sleep(5)
 end
--- ĞÂÔö£º¼ì²âBuild°æ±¾Í¨µÀ
+
+-- New: Detect Build version channel
 local function get_version_path()
-    local default_path = "helper"  -- Ä¬ÈÏÂ·¾¶
+    local default_path = "helper"  -- Default path
     local file = io.open("helper.ini", "r")
     if not file then
-        return default_path  -- ÅäÖÃÎÄ¼ş²»´æÔÚ£¬Ê¹ÓÃÄ¬ÈÏ
+        return default_path  -- Config file not found; use default
     end
     for line in file:lines() do
-        -- ¼ì²âÎ´×¢ÊÍµÄ[Build version channel]
+        -- Detect uncommented [Build version channel]
         if line:match("^%s*%[Build version channel%]%s*$") then
             file:close()
-            return "helper-build"  -- Ê¹ÓÃBuildÍ¨µÀÂ·¾¶
-        -- ¼ì²â×¢ÊÍµÄ#[Build version channel]
+            return "helper-build"  -- Use Build channel path
+        -- Detect commented #[Build version channel]
         elseif line:match("^%s*#%s*%[Build version channel%]%s*$") then
             file:close()
-            return default_path  -- Ê¹ÓÃÄ¬ÈÏÂ·¾¶
+            return default_path  -- Use default path
         end
     end
     file:close()
-    return default_path  -- Î´ÕÒµ½Ïà¹ØÅäÖÃ£¬Ê¹ÓÃÄ¬ÈÏ
+    return default_path  -- No relevant config found; use default
 end
 
--- »ñÈ¡ÔÆ¶Ë°æ±¾ĞÅÏ¢
+-- Fetch cloud version information
 local function check_version()
--- ¶ÁÈ¡ helper.ini ÖĞµÄË¢ĞÂÖÜÆÚ£¨Ìì£©
-local function read_refresh_cycle(file_path)
-    local file = io.open(file_path, "r")
-    if not file then
-        print("Î´ÕÒµ½ helper.ini£¬½«Á¢¼´½øĞĞ°æ±¾¼ì²â¡£")
+    -- Read refresh cycle (in days) from helper.ini
+    local function read_refresh_cycle(file_path)
+        local file = io.open(file_path, "r")
+        if not file then
+            print("helper.ini not found. Proceeding with immediate version check.")
+            return nil
+        end
+        for line in file:lines() do
+            local cycle = line:match("refresh cycle%s*=%s*(%d+)")
+            if cycle then
+                file:close()
+                return tonumber(cycle)
+            end
+        end
+        file:close()
+        print("No 'refresh cycle' parameter found in helper.ini. Proceeding with immediate version check.")
         return nil
     end
-    for line in file:lines() do
-        local cycle = line:match("refresh cycle%s*=%s*(%d+)")
-        if cycle then
-            file:close()
-            return tonumber(cycle)
-        end
-    end
-    file:close()
-    print("Î´ÔÚ helper.ini ÖĞÕÒµ½ refresh cycle ²ÎÊı£¬½«Á¢¼´½øĞĞ°æ±¾¼ì²â¡£")
-    return nil
-end
--- ´Ó version.ini ÖĞ»ñÈ¡ÉÏ´Î¼ì²âÊ±¼ä£¨¸ñÊ½£ºreview time: YYYY-MM-DD£©
-local function read_last_check_time(file_path)
-    local file = io.open(file_path, "r")
-    if not file then
-        print("Î´ÕÒµ½ version.ini£¬½«Á¢¼´½øĞĞ°æ±¾¼ì²â¡£\n")
-        return nil
-    end
-    for line in file:lines() do
-        local y, m, d = line:match("review time:%s*(%d+)%-(%d+)%-(%d+)")
-        if y then
-            file:close()
-            return os.time{year=tonumber(y), month=tonumber(m), day=tonumber(d), hour=0, min=0, sec=0}
-        end
-    end
-    file:close()
-    print("Î´ÔÚ version.ini ÖĞÕÒµ½ review time ¼ÇÂ¼£¬½«Á¢¼´½øĞĞ°æ±¾¼ì²â¡£")
-    return nil
-end
--- ÅĞ¶ÏÊÇ·ñĞèÒª¼ì²â¸üĞÂ
-local function should_check_update()
-    local cycle = read_refresh_cycle("helper.ini") -- ÌìÊı
-    local last_time = read_last_check_time("version.ini")
-    if not cycle or not last_time then
-        return true -- È±ÎÄ¼ş/²ÎÊı/Ê±¼äĞÅÏ¢£¬Ç¿ÖÆ¼ì²â
-    end
-    local now = os.time()
-    local diff_days = os.difftime(now, last_time) / (60 * 60 * 24) -- Ãë×ªÌì
-    if diff_days >= cycle then
-    return true
-else
-    if diff_days < 1 then
-        print("ÉÏ´Î¼ì²âÊÇ½ñÌì£¬Ìø¹ı°æ±¾¼ì²â¡£")
-    else
-        print(string.format("ÉÏ´Î¼ì²âÔÚ %.1f ÌìÇ°£¬Î´´ïµ½ %d ÌìµÄ¸üĞÂÖÜÆÚ", diff_days, cycle))
-		print(string.format("Ìø¹ı°æ±¾¼ì²â¡£", diff_days, cycle))
-    end
-    -- ¼ÆËãÏÂ´Î¼ì²âÊ±¼ä
-    local next_time = last_time + cycle * 24 * 60 * 60
-    local next_date = os.date("%Y-%m-%d", next_time)
-    print("Ô¤¼Æ½«ÔÚ " .. next_date .. " ºóÔÙ´Î¼ì²â¡£")
-    return false
-end
-end
--- Èô²»ĞèÒª¼ì²â£¬·µ»Ø
-if not should_check_update() then
-    delay.sleep(2)
-    return
-end
 
-    -- ĞÂÔö£ºÍ¨¹ıget_version_path()»ñÈ¡Êµ¼ÊÀ­È¡Â·¾¶
+    -- Read last check time from version.ini (format: review time: YYYY-MM-DD)
+    local function read_last_check_time(file_path)
+        local file = io.open(file_path, "r")
+        if not file then
+            print("version.ini not found. Proceeding with immediate version check.\n")
+            return nil
+        end
+        for line in file:lines() do
+            local y, m, d = line:match("review time:%s*(%d+)%-(%d+)%-(%d+)")
+            if y then
+                file:close()
+                return os.time{year=tonumber(y), month=tonumber(m), day=tonumber(d), hour=0, min=0, sec=0}
+            end
+        end
+        file:close()
+        print("No 'review time' record found in version.ini. Proceeding with immediate version check.")
+        return nil
+    end
+
+    -- Determine whether to perform an update check
+    local function should_check_update()
+        local cycle = read_refresh_cycle("helper.ini") -- in days
+        local last_time = read_last_check_time("version.ini")
+        if not cycle or not last_time then
+            return true -- Missing file/parameter/time â†’ force check
+        end
+        local now = os.time()
+        local diff_days = os.difftime(now, last_time) / (60 * 60 * 24) -- Convert seconds to days
+        if diff_days >= cycle then
+            return true
+        else
+            if diff_days < 1 then
+                print("Last check was today. Skipping version check.")
+            else
+                print(string.format("Last check was %.1f days ago. Update cycle is %d days.", diff_days, cycle))
+                print("Skipping version check.")
+            end
+            -- Calculate next check date
+            local next_time = last_time + cycle * 24 * 60 * 60
+            local next_date = os.date("%Y-%m-%d", next_time)
+            print("Next check scheduled for: " .. next_date)
+            return false
+        end
+    end
+
+    -- If update check is not needed, return early
+    if not should_check_update() then
+        delay.sleep(2)
+        return
+    end
+
+    -- Use get_version_path() to determine actual fetch path
     local version_path = get_version_path()
     local version_urls = {
-        "https://punguin.pages.dev/" .. version_path,      -- Æ´½ÓÂ·¾¶
-        --"http://47.239.84.169/" .. version_path,            -- Æ´½ÓÂ·¾¶
-		"http://127.0.0.1:0721/" .. version_path                   -- Æ´½ÓÂ·¾¶
-    } -- ·şÎñÆ÷ÁĞ±í
-    local local_version = "5.2" -- Ìæ»»Îª±¾µØµÄ°æ±¾ºÅ
-    local temp_version_file = "version.ini" -- ÁÙÊ±°æ±¾ÎÄ¼ş
-    local cloud_version = nil  -- ×¢Òâ,ÔÚ±àÒëÊ±ĞèÒª½«ip½øĞĞµ¥¶À¼ÓÃÜ
-    -- ´Ó°æ±¾ÎÄ¼şÖĞÌáÈ¡ÔÆ¶Ë°æ±¾ºÅ
+        "https://punguin.pages.dev/" .. version_path,      -- Append path
+        --"http://47.239.84.169/" .. version_path,         -- Append path
+        "http://127.0.0.1:0721/" .. version_path           -- Append path
+    } -- Server list
+    local local_version = "5.2" -- Replace with local version number
+    local temp_version_file = "version.ini" -- Temporary version file
+    local cloud_version = nil  -- Note: IP should be encrypted separately at compile time
+
+    -- Extract cloud version from downloaded file
     local function get_version_from_html(file_path)
         local file = io.open(file_path, "r")
         if not file then
             return nil
         end
         for line in file:lines() do
-            local version = line:match("%d+%.%d+[%w%-]*") -- "%d.%d"Îª°æ±¾ºÅ¸ñÊ½,¶ÔÓ¦µÄ°æ±¾ÎªX.X(Êı×Ö¸ñÊ½)
+            local version = line:match("%d+%.%d+[%w%-]*") -- Version format: X.X (numeric)
             if version then
                 file:close()
                 return version
@@ -179,7 +184,8 @@ end
         file:close()
         return nil
     end
-    -- ¼ì²éÎÄ¼şÊÇ·ñÓĞĞ§
+
+    -- Validate downloaded file
     local function is_file_valid(file_path)
         local file = io.open(file_path, "r")
         if not file then
@@ -187,47 +193,49 @@ end
         end
         local content = file:read("*a")
         file:close()
-        return content and #content > 0 and not content:find("404") -- ¼ì²éÄÚÈİÊÇ·ñ°üº¬404
+        return content and #content > 0 and not content:find("404") -- Check for 404 error
     end
-    -- ³¢ÊÔ´ÓÃ¿¸ö·şÎñÆ÷ÏÂÔØ°æ±¾ÎÄ¼ş
+
+    -- Attempt to download version file from each server
     for _, url in ipairs(version_urls) do
-        -- Ê¹ÓÃcurlÏÂÔØ°æ±¾ÎÄ¼ş
-		os.execute(string.format('"%s" -l -o %s %s >nul 2>nul', path.curl, temp_version_file, url))
+        -- Use curl to download the version file
+        os.execute(string.format('"%s" -l -o %s %s >nul 2>nul', path.curl, temp_version_file, url))
         
         if is_file_valid(temp_version_file) then
             cloud_version = get_version_from_html(temp_version_file)
             if cloud_version then
-                break -- ³É¹¦»ñÈ¡ÔÆ¶Ë°æ±¾ºÅ£¬ÍË³öÑ­»·
+                break -- Successfully retrieved cloud version; exit loop
             end
         end
     end
-    --os.remove(temp_version_file) -- É¾³ıÁÙÊ±°æ±¾ÎÄ¼ş
-    -- Êä³ö°æ±¾ĞÅÏ¢
+
+    -- Write current check time into version file
     if cloud_version then
-	-- »ñÈ¡µ±Ç°Ê±¼ä²¢Ğ´Èë°æ±¾ÎÄ¼ş
-local function write_check_time(file_path)
-    local time_str = os.date("\n\nreview time: %Y-%m-%d") -- ¸ñÊ½£º¼ì²âÊ±¼ä£ºÄê-ÔÂ-ÈÕ
-    local file = io.open(file_path, "a") -- Ê¹ÓÃ×·¼ÓÄ£Ê½
-    if file then
-        file:write(time_str)
-        file:close()
-    end
-end
-write_check_time(temp_version_file)
-        print(colors.bright .. "×îĞÂ°æ±¾: " .. cloud_version .. "  µ±Ç°°æ±¾: " .. local_version .. colors.reset .. "\n")
-        print(colors.blue .. colors.bright .. "ÈôÔÆ¶ËÓĞĞÂ°æ±¾,Çë½øÈëÖúÊÖºóÊäÈë'new'ÏÂÔØ\n" .. colors.reset)
+        local function write_check_time(file_path)
+            local time_str = os.date("\n\nreview time: %Y-%m-%d") -- Format: review time: YYYY-MM-DD
+            local file = io.open(file_path, "a") -- Append mode
+            if file then
+                file:write(time_str)
+                file:close()
+            end
+        end
+        write_check_time(temp_version_file)
+
+        print(colors.bright .. "Latest Version: " .. cloud_version .. "  Current Version: " .. local_version .. colors.reset .. "\n")
+        print(colors.blue .. colors.bright .. "If a new version is available, enter 'new' in the helper to download it.\n" .. colors.reset)
         print()
-        print("Ğ¦µã½âÎö:»¹ÓĞÈËÏÖÔÚÔÚÓÃÆó¶ìÖúÊÖ1.2")
-		print()
-        -- ÅĞ¶ÏÊÇ·ñĞèÒªµÈ´ıÓÃ»§ÊäÈë
+        print("Joke: Some people are still using Penguin Helper v1.2")
+        print()
+
+        -- Prompt user only if cloud version is newer
         if cloud_version > local_version then
-            wait_for_user_input()  -- Èç¹ûÔÆ¶Ë°æ±¾±È±¾µØ°æ±¾¸ß£¬µÈ´ıÓÃ»§ÊäÈë
-        else
+            wait_for_user_input()
         end
     else
-        print(colors.bright .. "ÎŞ·¨»ñÈ¡ÔÆ¶Ë°æ±¾\n" .. colors.reset)
+        print(colors.bright .. "Failed to retrieve cloud version\n" .. colors.reset)
     end
 end
+
 print_tips()
 check_version()
 print_start()
