@@ -7,7 +7,7 @@
 
 ---
 
-#### ⚠️ No English documentation yet. If needed, please translate manually.
+#### For English documentation or detatiled information, please refer to [![Ask DeepWiki](https://deepwiki.com/badge.svg)]([https://deepwiki.com/exp-3/OpenZxicEditor](https://deepwiki.com/punguin-32k/penguin-wifi-helper)).
 
 ---
 
