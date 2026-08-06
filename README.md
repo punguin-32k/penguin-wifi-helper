@@ -10,6 +10,24 @@
 #### For English documentation or detatiled information, please refer to [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/punguin-32k/penguin-wifi-helper).
 
 ---
+## 状态
+
+当前版本主线为简体中文，且后期大概不会衍生出其他语言的版本
+
+由于社区的恶劣，当前项目不再积极维护或者大规模更新。
+
+
+- 可能存在社区分支，以及在社区内的很多争议
+
+- 可能三个月或半年我才会再回来看一次这个项目
+
+
+如果你需要使用本项目的英文版本，可以参考社区维护版本：
+
+- 英文版（Community English Edition）：
+  https://github.com/sirbits/penguin-wifi-helper
+  
+感谢 <a href="https://github.com/sirbits">@sirbits</a> 对本项目进行国际化翻译和维护。
 
 ## 介绍 
 企鹅WiFi助手 是一个专为“随身WiFi”社区开发的实用工具箱，整合了多种硬件调试和信息查看功能，
