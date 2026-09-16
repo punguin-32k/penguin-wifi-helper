@@ -30,6 +30,8 @@
   
 感谢 <a href="https://github.com/sirbits">@sirbits</a> 对本项目进行国际化翻译和维护。
 
+[![Star History Chart](https://api.star-history.com/svg?repos=punguin-32k%2Fpenguin-wifi-helper&type=Date)](https://www.star-history.com/#punguin-32k/penguin-wifi-helper&Date)
+
 ## 介绍 
 企鹅WiFi助手 是一个专为“随身WiFi”社区开发的实用工具箱，整合了多种硬件调试和信息查看功能，
 适用于多种国产随身WiFi设备（如中兴微、紫光展锐、ASR系列等）。
